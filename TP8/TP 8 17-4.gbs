@@ -1,0 +1,334 @@
+
+ 
+procedure IrAlBorde_(direccion){
+    /*
+        Proposito:Mover el cabezal hasta el borde del tablero en direccion a *direcion* de la celda actual
+        Precondicion:*direccion* debe ser una direccion
+        Parametro:*direccion*: Direccion - Es la direccion a mover
+        Observacion:
+    */
+    while(puedeMover(direccion)){
+        Mover(direccion)
+    }
+    
+}
+-------------------------------------
+procedure  SacarTodasLasDeColor2_(colorASacar){
+    /*
+        Proposito:Sacar todas las bolitas del color *colorASacar* de la celda actual
+        Precondicion:Ninguna
+        Parametros:*colorASacar*: Color - Es el color del cual se van a sacar las bolitas
+    */
+    while(hayBolitas(colorASacar)){
+        Sacar(colorASacar)
+    }
+}
+--------------
+procedure VacialFilaDe_(color){
+    /*
+        Proposito: Sacar todas las bolitas del color *color* de la fila actual, dajando el cabezal en la ultima celda de la fila
+        Precondicion: Ninguna
+        Parametro: *color*: Es el color de la bolita que se va a sacar de la fila actual
+    */
+   IrAlBorde_(Oeste)
+    while(puedeMover(Este)){
+        SacarTodasLasDeColor_(color)
+        Mover(Este)
+    }
+    SacarTodasLasDeColor_(color)
+}
+-----------------------------
+procedure VaciarFilaDe_HaciaEl_(color, direccion){
+    /*
+        Proposito: Sacar todas las bolitas del color *color* de la fila actual en direccion hacia el *direccion*, 
+                   dejando el cabezal en la ultima celda de la fila hacia el *direccion*
+        Precondicion: Ninguna
+        Parametro:*color*: Es el color de la bolita que se va a sacar de la fila actual
+                  *direccion*: Es la direccion hacia donde se va a mover el cabezal para vaciar la celda
+    */
+   IrAlBorde_(opuesto(direccion))
+    while(puedeMover(direccion)){
+        SacarTodasLasDeColor_(color)
+        Mover(direccion)
+    }
+    SacarTodasLasDeColor_(color)       
+    
+}
+----------------------------------------
+function  haySiguienteCeldaEnUnRecorridoAl_Y_(dirPrincipal, dirSecundaria){
+    /*
+        Proposito:indica si hay una siguiente celda en un recorrido hacia el *dirPrincipal* o el  *dirSecundaria*
+        Precondicion:la direccion *dirPrincipal* y *dirsecundaria* no puede ser opuestas  ni iguales
+        Parametros:*dirPrincipal* *dirSecundaria* Son las direcciones en la que se  tiene que mover
+        Tipo:Booleano
+    */
+    return(puedeMover(dirPrincipal) || puedeMover(dirSecundaria) )
+    
+}
+
+procedure IrAPrimeraCeldaEnUnRecorridoAl_Y_(dirPrincipal, dirSecundaria){
+    /*
+        Proposito: Ubicar el cabezal en la primera celda del recorrido en direccion *dirPrincipal* y *dirSecundaria* desde la celda actual.
+        Precondiciones: *dirPrincipal* y *dirSecundaria* no pueden ser ni opuestas ni iguales.
+        Parametros: *dirPrincipal* : Direccion - primera direccion a ubicar el cabezal para la primera celda del recorrido.
+                    *dirSecundaria* : Direccion - segunda direccion a ubicar el cabezal para la primera celda del recorrido.
+    */
+    IrAlBorde(opuesto(dirPrincipal))
+    IrAlBorde(opuesto(dirSecundaria))
+}
+
+procedure IrASiguienteCeldaEnUnRecorridoAl_Y_(dirPrincipal, dirSecundaria){
+     /*
+    Proposito: Ubicar el cabezal en la siguiente celda en un recorrido en las direcciones **dirPrincipal** y **dirSecundaria**. 
+               El cabezal queda en la siguiente celda del recorrido desde la celda actual.
+    Precondiciones: 
+        * dirPrincipal y dirSecundaria no deben ser iguales ni opuestas.
+        * Debe existir una siguiente celda en el recorrido.
+    Parametros:
+        * dirPrincipal: Dirección - La dirección principal del recorrido.
+        * dirSecundaria: Dirección - La dirección secundaria del recorrido.
+    */
+    if (puedeMover(dirPrincipal)) {
+        Mover(dirPrincipal)
+    } else {
+        Mover(dirSecundaria)
+        IrAlBorde_(opuesto(dirPrincipal))  
+    }
+}
+---------------------------------
+
+
+procedure PintarTableroDe_(color){
+    /*
+        Proposito:Poner una bolita del colo *color* en cada celda de todo el tablero
+        Precondicion:
+        Parametro: *color*: Color - Es el color de la bolita de la cual se va poner en cada celda
+        Observacion:
+                    Es un recorrido de procesamiento sobre las celdas del tablero
+                    pintando cada una con una bolita del color *color*
+    */
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    while(haySiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)){
+        Poner(color)
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    }
+    Poner(color)
+    
+}
+
+procedure PonerUnaDeCadaEnTodoElTablero(){
+ /*
+        Proposito:Poner una bolita de cada color  en cada celda de todo el tablero
+        Precondicion:niguna
+        Observacion:
+                    Es un recorrido de procesamiento sobre las celdas del tablero
+                    poninedo uan bolita de cadaa color en cada celda
+    */
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    while(haySiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)){
+        PonerUnaDeCada()
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    }
+    PonerUnaDeCada()
+    
+}
+
+
+procedure RellenarCon_EnAusenciaDe_EnElTablero(colorAPoner, colorAMirar){
+     /*
+        Proposito:Poner una bolita de cada color  en cada celda de todo el tablero
+        Precondicion:niguna
+        Observacion:
+                    Es un recorrido de procesamiento sobre las celdas del tablero
+                    poninedo uan bolita de cadaa color en cada celda
+    */
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    while(haySiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)){
+        RellenarCeldaCon_EnAusenciaDe_(colorAPoner, colorAMirar)
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    }
+    RellenarCeldaCon_EnAusenciaDe_(colorAPoner, colorAMirar)
+    
+    
+}
+
+procedure RellenarCeldaCon_EnAusenciaDe_(colorAPoner, colorAMirar){
+    /*
+        Proposito: Poner una bolita del color *colorAPoner* en caso de que no haya bolita del color *colorAMirar* en la celda actual
+        Precondicion:ninguna
+        Parametros: *colorAPoner*: Es el color de la bolita que se va a poner en la celda
+                    *colorAMirar*: Es el color de la bolita que se verifica si esta ausente o presente en la celda actual
+    */    
+    if(not(hayBolitas(colorAMirar))){
+        Poner(colorAPoner)
+    }
+}
+
+procedure  CompletarHasta_De_EnElTablero(cantidad, color){
+ /*
+        Proposito: Poner una bolita del color *colorAPoner* en caso de que no haya bolita del color *colorAMirar* en cada celda del tablero
+        Precondicion:ninguna
+        Parametros: *colorAPoner*: Es el color de la bolita que se va a poner en cada celda
+                    *colorAMirar*: Es el color de la bolita que se verifica si esta ausente o presente en cada celda del tablero
+        Obs:
+            ES UN RECORRIDO DE PROCESAMIENTO SOBRE LAS CELDAS DEL TABLERO
+            COMPLENTADO CADA UNA HAST QUE TENGA *CANTIDAD* BOLITAS DEL COLOR *COLOR*
+            
+    */    
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Oeste,Sur)
+    while( haySiguienteCeldaEnUnRecorridoAl_Y_(Oeste,Sur)){
+        CompletarHasta_De_EnlaCelda(cantidad, color)
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Oeste,Sur)
+        
+    }
+    CompletarHasta_De_EnlaCelda(cantidad, color)
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Oeste,Sur)
+    
+}
+
+
+procedure CompletarHasta_De_EnlaCelda(cantidad, color){
+    /*
+        Proposito: Poner bolitas de color *color* hasta que haya exactamente *cantidad* bolitas de color *color*
+        Precondicion:ninguna
+        Parametros: *cantidad*: Es la cantidad de bolitas que debe haber en la celda actual
+                    *color*: Es el color de la bolita de la cual e va a poner en la celda actual
+    */    
+    repeat (cantidad - nroBolitas(color)) {
+        Poner(color)
+    }
+}
+
+---------------------------------------------------------
+
+procedure IrHastaLaBolitaRojaHacia_(direcciónABuscar){
+    /*
+        Proposito:Ubicar el cabezal  en la celda más próxima a la actual en la dirección hacia el *direcciónABuscar* que posea una bolita de color Rojo 
+                   Si hay una bolita de color Rojo en la celda actual, el cabezal debe moverse igual a la celda que contenga una bolita roja
+        Precondicion: Debe haber al menos una celda en direccion hacia el *direcciónABuscar* de la celda actual
+                      Debe haber al menos una bolita roja en alguna  celda hacia el *direcciónABuscar* de la celda actual
+        Parametros: *direcciónABuscar*: Es la direccion a la cual se va a mover el cabezal
+    */
+     Mover(direcciónABuscar)
+    while(not(hayBolitas(Rojo)) && puedeMover(direccion)){
+        Mover(direcciónABuscar)
+    }
+}
+
+procedure  IrALaSiguienteVacíaHacia_(direccion){
+     /*
+        Proposito: Ubicar el cabezal  en la celda más próxima a la actual en la dirección hacia el *direcciónABuscar* que este vacia
+                   En caso de no haber ninguna celda vacia en direccion hacia *direccion* ubica el cabezal en la celda del borde *direccion*
+        Precondicion: Debe haber al menos una celda en direccion hacia el *direcciónABuscar* de la celda actual
+        Parametros: *direcciónABuscar*: Es la direccion a la cual se va a mover el cabezal
+    */
+    while( puedeMover(direccion) && not esCeldaVacia())  {
+        Mover(direccion)
+    }
+}
+
+-----------------------------------
+
+function  esDepósitoCentral() {
+    /*
+        Proposito:Indicar si el cabezal se encuentra sobre un deposito central
+        Precondicion:ninguna
+        Tipo:Booleano
+        Obs: Un deposito central es repretado por 3 bolitas negras
+    */
+    return(nroBolitas(Negro)==3)
+} 
+function esDepósitoLocal(){
+    /*
+        Proposito:Indicar si el cabezal se encuentra sobre un deposito local
+        Precondicion:ninguna
+        Tipo:Booleano
+        Obs: Un deposito central es repretado por 2 bolitas negras
+    */
+    return(nroBolitas(Negro)==2)
+}
+
+//una bolita negra marca el camino de central a local,
+// cada bolita azul marca una unidad de mercadería
+
+procedure IrDeCentralAlLocal_(direccion){
+    /*
+        Proposito:Ubicar el cabezal del deposito central hacia el deposito local en direccion hacia el *direccion*
+        Precondicion: 
+                     Debe estar sobre un deposito central
+                     Debe existir un depo ocal hacia el *direccion* de la celda actual
+                      
+        Parametro:*direccion*:Direccion - Es la direccion a moverse
+        Observacion:Es un recorrido
+    */
+    while(nroBolitas(Negro)==1 || not esDepósitoLocal()){
+        Mover(direccion)
+    }
+    
+}
+
+program {
+    Llevar_MercaderíasAlLocal_(3,Sur)
+}
+
+
+procedure IrDelLocal_ACentral(direccion){
+    /*
+        Proposito:Ubicar el cabezal del deposito local hacia el deposito central en direccion hacia el *direccion*
+        Precondicion: 
+                     Debe estar sobre un deposito local
+                     Debe existir un depo central hacia el *direccion* de la celda actual
+                      
+        Parametro:*direccion*:Direccion - Es la direccion a moverse
+        Observacion:Es un recorrido
+    */
+    while(nroBolitas(Negro)==1 || not esDepósitoCentral()){
+        Mover(direccion)
+    }
+    
+}
+
+procedure Llevar_MercaderíasAlLocal_(cantidad, direccion){
+    /*
+        Proposito: LLevar *cantidad* unidades de mercaderia del depo Central al depo local que se encuentra en direccion hacia el *direccion*
+        Precondicion: 
+                     Debe estar sobre el deposito central
+                     Debe existir un depo local hacia el *direccion* de la celda actual
+                     Debe haber al menos *cantidad* unidades de mercaderia en el depo central
+                      
+        Parametro:
+                    *direccion*:Direccion - Es la direccion a moverse
+                    *cantidad*: Numero . Es la cantidad de mercadria a transportar
+        Observacion:
+    */
+    Sacar_DeColor_(cantidad, Azul)
+    IrDeCentralAlLocal_(direccion)
+    Poner_DeColor_(cantidad,Azul)
+    
+}
+
+/*
+        Proposito:
+        Precondicion:
+        Parametro:
+        Observacion:
+    */
+procedure Traer_MercaderíasDelLocal_(cantidad, direccion){
+    
+/*
+        Proposito: Transportat *cantidad* unidades de mercaderia del depo local en direccion *direccion* al depo central
+        Precondicion:
+                     -Debe estar sobre el deposito central
+                     -Debe existir un deposito local hacia el *direccion* de la celda actual
+                     -*cantidad* debe ser un numero mayor a 0
+        Parametro:
+        Observacion:
+    */
+    IrDeCentralAlLocal_(direccion)
+    Sacar_UnidadesMercaderia(cantidad)
+    IrDelLocal_ACentral(opuesto(direccion))
+    
+    
+}
+
+

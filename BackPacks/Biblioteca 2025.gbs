@@ -1,0 +1,26 @@
+procedure  SacarTodasLasDeColor_(colorASacar){
+    /*
+        Proposito:Sacar todas las bolitas del color *colorASacar* de la celda actual
+        Precondicion:Ninguna
+        Parametros:*colorASacar*: Color - Es el color del cual se van a sacar las bolitas
+    */
+    repeat(nroBolitas(colorASacar)){
+        Sacar(colorASacar)
+    }
+}
+
+program{
+    
+    VaciarCelda()
+}
+procedure  VaciarCelda(){
+    /*
+        Proposito:Sacar todas las bolitas del de la celda actual
+        Precondicion:Ninguna
+    */
+    SacarTodasLasDeColor_(Azul)
+    SacarTodasLasDeColor_(Verde)
+    SacarTodasLasDeColor_(Rojo)
+    SacarTodasLasDeColor_(Negro)
+    
+}

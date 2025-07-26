@@ -1,0 +1,131 @@
+
+function puedenGanarBatallaMagosContraMortifagos(){
+    /*
+        Proposito:Indica si los magos de Gobwarts pueden derrotar a los mortiferos en uan batalla
+        Precondicion: ninguno
+        Tipo:BOOLEANO
+        
+    */
+        return(poderTotalDeLosMagosDeGobwarts() > poderTotalDeLosMortiferosDeGobwarts())
+    
+}
+------------------------------------------------------Ejercicio 1)----------------
+function poderMagicoTotalDeLos_(*categoriaPersonaje*){
+     /*
+        Proposito:Describe el poder total de todos los magos de Gobwarts
+        Precondicion: ninguno
+        Tipo:Numero
+        Parametros: *categoriaPersonaje*:Numero - Es el numero que representa a los distintos tipos de personajes de que puede ahber en la celda actual 
+        Observacion:
+                        Es un recorrido de acumulacion en direccion hacia el norte y este de la habitacion actual
+                        sobre las habitaciones de Gobwarts
+                        acumulando el poder magico del personaje *categoriaPersonaje*  que se encuentra en cada habitacion de Gobwarts.
+    */
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    poderMagicoAlMomento := poderDelMagicoDe__DeLaHabitacionActual(categoriaPersonaje)
+    while(haySiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)){
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)
+        poderMagicoAlMomento := poderMagicoAlMomento + poderDelMagicoDe__DeLaHabitacionActual(categoriaPersonaje)
+    }
+    return(poderMagicoAlMomento)
+}
+function poderDelMagicoDe_SiNoCero(categoriaPersonaje){
+    /*
+        Proposito:Describe el poder magico del eprsonaje *categoriaPersonaje* de la habitacion actual
+        Precondicion:*categoriaPersonaje* debe ser un numero
+        Tipo:Numero
+    */
+    return(choose  poderMágicoDelPersonaje() when(hayPersonajeDeCategoría_(categoriaPersonaje))
+                    0                       otherwise    
+        )
+}        
+  ------------------------------------------------Ejercicio 2--------------------------------------
+  
+function estáElSeñorGobscuroEnGobwarts(){
+    /*
+        Proposito:Indica si el señor Gobscuro se encuentra en alguna habitacion  Gobswarts
+        Precondicion:
+        Tipo:Booleano
+        Observacion:
+                        Es un recorrido de busqueda sin saber si esta
+                        sobre las habitaciones de Gobwarts
+                        buscando si el senor Gobscuro se encuentra en alguna mazmorra de Gobwarts
+    */
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    while(not estaElSenorGobscuro() && haySiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)){
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    }
+    return(estaElSenorGobscuro())
+}  
+  
+function   estaElSenorGobscuro(){
+    /*
+        Proposito:Indica si el señor gobscuro se encuetra habitacion actual y si esa habitacion es una mazmorra
+        Precondicion:nignuna
+        Tipo:Booleano
+    */
+    return( (tipoDeHabitación()==habitaciónMazmorras ()) &&  elSeñorGoscuroEstaOcultado())
+}
+  
+function   elSeñorGoscuroEstaOcultado(){
+/*
+        Proposito:Indica Si el señor Gobscuro se encuentra en la mazmorra actual y si esta ocultando su poder magico
+        Precondicion:Debe estar sobre una habitacion tipo Mazmorra
+        Tipo:Booleano
+   */
+    return( hayPersonajeDeCategoría_(categoríaMortifago) && poderMágicoDelPersonaje() ==1)
+}
+  
+ ------------------------------------------------Ejercicio 3--------------------------------------    
+    
+procedure EliminarEnemigosPorDestrucciónDelDiario(){
+/*
+        Proposito:Elimiar a todos lso mortiferos y dementores de Gobwarts
+        Precondicion:Ninguno
+        Observacion:
+                    Es un recorrido de transformacion
+                    sobre las habitaciones de Gobwarts en direccion al Norte y Este
+                    eliminado a los dementores y mortiferos que se encuentran las habitaciones
+    */     
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    EliminarDementorOMortiferoDeLaHabitacionActual()
+    while( haySiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)){
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este,Norte)
+        EliminarDementorOMortiferoDeLaHabitacionActual()
+    }
+}    
+procedure EliminarDementorOMortiferoDeLaHabitacionActual(){
+/*
+        Proposito:Eliminar al demento o mortifero que se encuentra en al habitacion actual
+        Precondicion:ninguna
+        
+    */  
+    if(hayPersonajeDeCategoría_(categoríaMortifago) || hayPersonajeDeCategoría_(categoríaDementor)){
+        EliminarPersonaje()
+}
+
+------------------------------------------------Ejercicio 4-------------------------------------- 
+
+function categoriaDePersonajeConMayorPoderMágico(){
+/*
+        Proposito:Describe la categoria del personaje con mayor poder magico de Gobwarts
+        Precondicion:Ninguno
+        Tipo:Numero
+    */
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este,Norte)
+    categoriaPersonajeActual := minCategoria()
+    categoriaConMayorPoderPorAhora := poderMagicoTotalDeLos_(categoriaPersonajeActual())
+    while ( categoriaPersonajeActual/= maxCategoria()) {
+        categoriaPersonajeActual  := siguienteCategoria_(categoriaPersonajeActual)
+        categoriaConMayorPoderPorAhora:= máximoEntre_Y_(poderMagicoTotalDeLos_(categoriaPersonajeActual),categoriaConMayorPoderPorAhora)
+    }
+    return(categoriaConMayorPoderPorAhora)
+}
+
+
+
+
+
+
+
+

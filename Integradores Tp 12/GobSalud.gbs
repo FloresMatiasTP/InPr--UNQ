@@ -1,0 +1,395 @@
+type TipoDePago is variant {
+    /* PROP: modelar Tipos de pago aceptados */
+    case Tarjeta {}
+    case MartPago {}
+    case Efectivo {}
+}
+type Producto is record{
+    /* PROP: modelar productos
+    INV.REP.: precio > 0 */
+    field nombre // String
+    field marca // String
+    field precio // Número
+}
+type Cliente is record {
+    /* PROP: modelar clientes */
+    field dni // String
+    field tipoDePago // TipoDePago
+    field productos // [Producto]
+}
+type Caja is record {
+    /* PROP: modelar cajas
+    INV.REP.: número > 0
+    facturado >= 0 */
+    field número // Número
+    field clientesEsperando // [Cliente]
+    field aceptaPagos // [TipoDePago]
+    field esRápida // Bool
+    field facturado // Número
+}
+
+function yerbaMateMarolio() {
+    return(
+        Producto(
+            nombre <- "Yerba",
+            marca <- "Marolio",
+            precio <- 810
+        )
+    )
+}
+
+function caja1() {
+    return(
+        Caja(
+            número <- 1,
+            clientesEsperando <- [],
+            aceptaPagos <- [Tarjeta],
+            esRápida <- True,
+            facturado <- 0
+        )
+    )
+}
+
+function clienteMartinSanchez() {
+    /*
+        PROPÓSITO: Describe al cliente Martin Sanchez.
+        TIPO: Cliente
+        PRECONDICIONES:
+            
+Ninguna*/
+  return (
+      Cliente(
+          dni <- "51234443",
+          tipoDePago <- Efectivo,
+          productos <- [yerbaMateMañanita(), azucarLedesma(), biscochitosDonSatur()]))
+}
+
+function caja2() {
+    /*
+    PROPOSITO: describe la primer caja
+    TIPO: Caja
+    */
+    return (Caja(
+                número            <- 2,
+                clientesEsperando <- [],
+                aceptaPagos       <- [Tarjeta, Efectivo],
+                esRápida          <- True,
+                facturado         <- 156000
+                ))
+}
+
+function clienteJuanPerez() {
+    /*
+        PROPÓSITO: Describe al cliente Juan Perez.
+        TIPO: Cliente
+        PRECONDICIONES:
+            
+Ninguna*/
+  return (
+      Cliente(
+          dni <- "36778615",
+          tipoDePago <- Tarjeta,
+          productos <- [yerbaMateMañanita(), azucarLedesma()]))
+}
+
+function caja3() {
+    return(
+        Caja(
+            número <- 3,
+            clientesEsperando <- [clienteMartinSanchez(), clienteJuanPerez()],
+            aceptaPagos <- [MartPago],
+            esRápida <- True,
+            facturado <- 0
+        )
+    )
+}
+
+function azucarLedesma() {
+    /*
+        PROPÓSITO: Describe al producto azucar ledesma.
+        TIPO: Producto
+        PRECONDICIONES:
+            
+Ninguna.*/
+  return (
+      Producto(
+          nombre <- "Azucar",
+          marca  <- "Ledesma",
+          precio <- 1500))
+}
+
+function pureDeTomateMarolio() {
+    /*
+        PROPÓSITO: Describe al producto pure de tomate Marolio.
+        TIPO: Producto
+        PRECONDICIONES:
+            Ninguna.
+    */
+  return (
+      Producto(
+          nombre <- "Pure de Tomate",
+          marca  <- "Marolio",
+          precio <- 1000))
+}
+
+function biscochitosDonSatur() {
+    /*
+        PROPÓSITO:  Describe al producto biscochitos don satur.
+        TIPO: Producto
+        PRECONDICIONES:
+            Ninguna.
+    */
+  return (
+      Producto(
+          nombre <- "Bizcochitos",
+          marca  <- "Don Satur",
+          precio <- 1000))
+}
+
+function yerbaMateMañanita() {
+    /*
+        PROPÓSITO: Describe al producto yerba mate mañanita.
+        TIPO: Producto
+        PRECONDICIONES:
+            
+Ninguna.*/
+  return (
+      Producto(
+          nombre <- "Yerba Mate",
+          marca  <- "Mañanita",
+          precio <- 2500))
+}
+
+
+
+function cantidadDeClientesEsperandoEn_(caja) {
+    /*
+        PROPÓSITO:  describe la cantidad de clientes que estan esperando
+            en la caja dada
+        PARÁMETROS:
+            * caja: Caja
+        TIPO: Número
+        PRECONDICIONES:
+            * Ninguna.
+    */
+    
+    return (longitudDe_(clientesEsperando(caja)))
+}
+
+function cajaMenosOcupadaDe_(cajas) { // [caja1, caja2, caja3, caja4]
+    /*
+        PROPÓSITO:  describe la caja con menos clientes espernado entre
+            las cajas dadas. Si hay dos o mas cajas con la menor cantidad
+            de clientes, describimos la mas reciente en la lista.
+        PARÁMETROS:
+            * cajas: [Caja]
+        TIPO: Caja
+        PRECONDICIONES:
+            * la lista de cajas dada no puede estar vacia.
+        OBSERVACIONES: Recorrido de maximos y minimos entre cada caja de la 
+            la lista de cajas dadas.
+    */
+
+    cajaMenosOcupadaHastaAhora := primero(cajas) //caja1
+
+    foreach caja in resto(cajas) { // [caja2, caja3, caja4]
+        cajaMenosOcupadaHastaAhora := cajaMenosOcupadaEntre_Y_(cajaMenosOcupadaHastaAhora, caja)
+    }
+    
+    return (cajaMenosOcupadaHastaAhora)
+}
+
+function cajaMenosOcupadaEntre_Y_(primeraCaja, segundaCaja) {
+    /*
+        PROPÓSITO:  describe la caja con menos clientes espernado entre
+            la primera y la segunda caja dadas. Si las dos cajas tienen
+            la misma cantidad de clientes describe la primera.
+        PARÁMETROS:
+            * primeraCaja: Caja
+            * segundaCaja: Caja
+        TIPO: Caja
+        PRECONDICIONES:
+            * Ninguna.
+    */
+    
+    return (choose
+        primeraCaja when (cantidadDeClientesEsperandoEn_(primeraCaja) <= cantidadDeClientesEsperandoEn_(segundaCaja))
+        segundaCaja otherwise
+    )
+}
+
+
+function gobsMart_conIngresoDe_aCaja_(listaDeCajas, unCliente, nroCaja) {
+    /*
+        PROPÓSITO:  describe la lista de cajas dadas con el cliente dado
+            agregado a la caja del numero **nroCaja**.
+        PARÁMETROS:
+            * listaDeCajas: [Caja]
+            * unCliente: Cliente
+            * nroCaja: Número
+        TIPO: [Caja]
+        PRECONDICIONES:
+            * debe exitir una caja en listaDeCajas con el nro de caja dado.
+            * el cliente dado no debe existir en ninguna de las cajas dadas.
+            * las cajas en la lista de cajas dado deben tener un nro de caja distinto
+    */
+
+    listaDeCajasARecorrer := listaDeCajas
+    
+    listaDeCajasRecorridasHastaAhora := []
+
+    while(nroCaja /= número(primero(listaDeCajasARecorrer))) {
+        listaDeCajasRecorridasHastaAhora := listaDeCajasRecorridasHastaAhora ++ [primero(listaDeCajasARecorrer)]
+        listaDeCajasARecorrer:= resto(listaDeCajasARecorrer)
+    }
+
+    return (
+        listaDeCajasRecorridasHastaAhora ++ 
+        [caja_ConIngresoDe_(primero(listaDeCajasARecorrer),unCliente)] ++ 
+        resto(listaDeCajasARecorrer))
+}
+
+
+function caja_ConIngresoDe_(caja, cliente) {
+    /*
+        PROPÓSITO:  describe la caja dada con el cliente dado
+            ingresado en la cola de la misma.
+        PARÁMETROS:
+            * caja: Caja
+            * cliente: Cliente
+        TIPO: Caja
+        PRECONDICIONES:
+             * el cliente dado no debe existir en caja dada.
+    */
+    
+    return (
+        Caja( caja |
+            clientesEsperando <- clientesEsperando(caja) ++ [cliente]
+        )
+    )
+}
+
+
+function clienteSaba() {
+    /*
+        PROPÓSITO: Describe al cliente Juan Perez.
+        TIPO: Cliente
+        PRECONDICIONES:
+            
+Ninguna*/
+  return (
+      Cliente(
+          dni <- "32354633",
+          tipoDePago <- Efectivo,
+          productos <- [biscochitosDonSatur()]))
+}
+
+function clientePablote() {
+    /*
+        PROPÓSITO: Describe al cliente Juan Perez.
+        TIPO: Cliente
+        PRECONDICIONES:
+            
+Ninguna*/
+  return (
+      Cliente(
+          dni <- "31042323",
+          tipoDePago <- MartPago,
+          productos <- [yerbaMateMañanita(), biscochitosDonSatur()]))
+}
+
+function gobsMart_conIngresosDe_(cajas, clientes) {
+    /*
+        PROPÓSITO:  describe la lista de cajas dado con los clientes
+            dados agregados a la caja mas conventiente.
+        PARÁMETROS:
+            * cajas: [Caja]
+            * clientes: [Cliente]
+        TIPO: [Caja]
+        PRECONDICIONES:
+            * cajas no puede estar vacia.
+            * Debe existir al menos una caja que tenga el metodo de pago que tengan los clientes dados.
+            * Las cajas no pueden tener el mismo numero de cajas.
+            * los clientes en la lista de clientes no pueden tener el mismo dni
+            * los clientes en la lista de clientes no puenen estar en alguna de las cajas dadas.
+    */
+
+    cajasConClientesAcomodadosHastaAhora := cajas
+    
+    foreach cliente in clientes {
+        cajasConClientesAcomodadosHastaAhora :=  gobsMart_conIngresoDe_(cajasConClientesAcomodadosHastaAhora, cliente)
+    }
+
+    return (cajasConClientesAcomodadosHastaAhora)
+}
+
+function gobsMart_conIngresoDe_(cajas, cliente) {
+    /*
+        PROPÓSITO:  describe la lista de cajas dado con el cliente
+            dado agregados a la caja mas conventiente.
+        PARÁMETROS:
+            * cajas: [Caja]
+            * cliente: Cliente
+        TIPO: [Caja]
+        PRECONDICIONES:
+            * cajas no puede estar vacia.
+            * Debe existir al menos una caja que tenga el metodo de pago que tenga el cliente dado.
+            * Las cajas no pueden tener el mismo numero de cajas.
+            * el cliente dado no puede estar en alguna de las cajas dadas.
+    */
+
+    return(gobsMart_conIngresoDe_aCaja_(cajas,cliente, número(cajaDe_MasConvienteParaCliente_(cajas,cliente))))
+}
+
+function cajaDe_MasConvienteParaCliente_(cajas, cliente) {
+    /*
+        PROPÓSITO:  describe la caja mas conviente de las cajas
+            dadas para el cliente dado
+        PARÁMETROS:
+            * cajas: [Caja]
+            * cliente: Cliente
+        TIPO: Caja
+        PRECONDICIONES:
+            * cajas no puede estar vacia.
+            * Debe existir al menos una caja que tenga el metodo de pago que tenga el cliente dado.
+            * Las cajas no pueden tener el mismo numero de cajas.
+    */
+    
+    return (cajaMenosOcupadaDe_(cajas_ConElMetodoDePago_(cajas,tipoDePago(cliente))))
+} 
+
+function cajas_ConElMetodoDePago_(cajas, metodoDePago) {
+    /*
+        PROPÓSITO:  describe las cajas con el metodo de pago dado
+            entre las cajas dadas.
+        PARÁMETROS:
+            * cajas: [Cajas]
+            * metodoDePago: TipoDePago
+        TIPO: [Cajas]
+        PRECONDICIONES:
+            * Ninguna.
+        OBSERVACIONES: Recorrido de filtro, dejando solamente las cajas
+            que tengan el metodo de pago dado.
+    */
+
+    cajasConElMetodoDePagoHastaAhora := []
+    
+    foreach caja in cajas {
+        cajasConElMetodoDePagoHastaAhora:= cajasConElMetodoDePagoHastaAhora ++ 
+            singular_Si_(caja, contiene_A_(aceptaPagos(caja),metodoDePago))
+    }
+
+    return (cajasConElMetodoDePagoHastaAhora)
+}
+
+
+program {
+    // return(cantidadDeClientesEsperandoEn_(caja2()))
+    // return(cajaMenosOcupadaDe_([caja1(), caja2(), caja3()]))
+    gobsMart_conIngresoDe_aCaja_([caja1(), caja2(), caja3()],clienteSaba(), 1)
+
+    gobsMart_conIngresosDe_([caja1(), caja2(), caja3()], [clienteSaba(),])
+
+
+}
+

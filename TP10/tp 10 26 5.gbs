@@ -1,0 +1,261 @@
+
+---------------------- EJERCICIO 1----------------------------------------
+type DíaDeLaSemana is variant{
+    /*
+        Prop: Modelas lso dias de al semana
+    */
+    case Lunes
+    case Martes
+    case Miercoles
+    case Jueves
+    case Viernes
+    case Sabado
+    case Domingo
+}
+
+function díaSiguiente_(unDia){
+    /*
+        Prop: Describe el dia siguiente de *unDia*
+        Precondicion:ninguno
+        Parametro: *unDia* : Dia
+        Tipo: Dia
+    */
+    return(choose  Martes    when ( unDiaDeLaSemana == Lunes)
+                    Miercoles when (unDiaDeLaSemana ==Martes)
+                    Jueves    when (unDiaDeLaSemana ==Miercoles)
+                    Viernes   when (unDiaDeLaSemana ==Jueves)
+                    Sabado    when (unDiaDeLaSemana ==Viernes)
+                    Domingo   when (unDiaDeLaSemana ==Sabado)
+                    Lunes     otherwise
+    )
+}
+
+function díaPrevio_(unDia){
+    /*
+        Prop: Describe el dia previo de *unDia*
+        Precondicion:ninguno
+        Parametro: *unDia* : Dia
+        Tipo: Dia
+    */
+    return(choose   
+                    Lunes     when ( unDiaDeLaSemana == Martes)
+                    Martes    when ( unDiaDeLaSemana == Miercoles)
+                    Miercoles when (unDiaDeLaSemana ==Jueves)
+                    Jueves    when (unDiaDeLaSemana ==Viernes)
+                    Viernes   when (unDiaDeLaSemana ==Sabado)
+                    Sabado    when (unDiaDeLaSemana ==Domingo)
+                    Domingo   otherwise
+    )
+    
+}
+function esFinDeSemana_(unDia){
+    /*
+        Prop:  Indica si el día *unDia*  es uno de los dias del fin de semana
+        Precondicion:ninguno
+        Parametro: *unDia* : Dia
+        Tipo: Boolenao
+    */
+    return ( unDia == Sabado || unDia== Domingo)
+   
+}
+
+---------------------- ------------------------------------EJERCICIO 2----------------------------------------
+
+type PartidoPolitico is variant{
+    /*
+        Prop:  Moelar los partidos politcos
+        
+    */
+    
+    case Democracia por la Verdad,
+    case Unidos por la República,
+    case Liberales por la Libertad,
+    case Izquierda de los Obreros
+}
+---------A---------
+function tieneMásVotantes_Que_(primerPP,segundoPP){
+    /*
+        Prop:  Indica si el pp *primerPP* tiene mas votantes que *segundoPP*
+        Precondicion:ninguno
+      
+        Tipo: Boolenao
+    */
+    return( cantidadDeVotosDe_(primerPP) > cantidadDeVotosDe_(segundoPP))
+}
+
+function elQueTieneMásVotos(){
+    /*
+        Prop:  Describe le pp que tiene mas votos 
+        Precondicion:ninguno
+        Tipo: PartidoPolitoco
+    Observacion: Es un recorrido de busqueda  sobre los partidos politicos 
+                     en donde se busca el PP que tenga mas votantes
+    */
+    partidoPoliticoActual := DemocraciaPorLaVerdad
+    partidoPoliticoConMasVotosAlMomento := partidoPoliticoActual
+    while (partidoPoliticoActual /=  IzquierdaDeLosObreros){
+        partidoPoliticoActual := partidoPoliticoSiguienteDe_(partidoPoliticoActual)
+        partidoPoliticoConMasVotosAlMomento := partidoConMasVotosEntre_Y_(partidoPoliticoActual, partidoPoliticoConMasVotosAlMomento)
+    }
+    return(partidoPoliticoConMasVotosAlMomento)
+
+}
+function partidoPoliticoSiguienteDe_(unPartidoPolitico){
+    /*
+        Proposito: Describe el siguiente Partido Politico de **unPartidoPolitico**
+        Precondicion:Ninguna
+        Parametro: **unPartidoPolitico**: PartidoPolitico
+        Tipo: PartidoPolitico
+    */
+     return( choose UnidosPorLaRepública   when (unPartidoPolitico == DemocraciaPorLaVerdad )
+                    LiberalesPorLaLibertad when (unPartidoPolitico == UnidosPorLaRepública)   
+                    IzquierdaDeLosObreros  when (unPartidoPolitico ==LiberalesPorLaLibertad)  
+                    DemocraciaPorLaVerdad  otherwise
+     )
+}
+function partidoConMasVotosEntre_Y_(unPP,otroPP){
+    
+    return ( choose unPP when( cantidadDeVotosDe_(unPP) > cantidadDeVotosDe_(otroPP)
+                    otroPP otherwise
+    )
+}
+--------------------------------------------EJERCICIO 3--------------------------------------------
+
+
+type Carta is record{
+    /*
+        Proposito: Modelar cartas de juego
+        INV.REP: El numero debe ser entre 1 y7 o 10 y 12 
+    */
+    field palo //String
+    field numero // Numero
+}
+
+type Palo is variant{
+    /*
+        Proposito: Modelar los palos de cartas españolas
+        
+    */
+    case Basto {}
+    case Copa {}
+    case Espada {}
+    case Oro {}
+    
+}
+//a. anchoDeEspadas que describe la carta 1 de Espadas.
+function anchoDeEspadas(){
+    /*
+        Proposito: Describe la carta numero 1 de Espadas
+        Precondicion:ninguno
+        Tipo:Carta
+    */
+    return( Carta( palo <- Espada,
+                    numero <- 1) )
+}
+//b. anchoDeBastos que describe la carta 1 de Bastos
+function anchoDeBastos(){
+    /*
+        Proposito: Describe la carta numero 1 de Bastos
+        Precondicion:ninguno
+        Tipo:Carta
+    */ 
+  return( Carta( palo <- Basto,
+                    numero <- 1 ) )
+}
+//c. laCarta_de_ que dado un número y un palo que describe la carta con dicho número y dicho palo..
+
+function laCarta_de_(palo,numero){
+    /*
+        Proposito: Describe la carta del palo **palo **con el numero **numero** 
+        Precondicion:
+                    -**palo**: Debe ser del tipo palo
+                    -**numero*: debe ser un numero entre 1 y7 o 10 y 12
+        Tipo:Carta
+    */ 
+    return( Carta( palo <- palo,
+                    numero <- numero ) )
+}
+//d.// esUnAncho_ que indica si la carta dada es un 1.
+function esUnAncho_(unaCarta){
+     /*
+        Proposito: Indica si el numero de la carta **unaCarta** es un ancho de Espada
+        Precondicion:
+                    -**unaCarta**: Debe ser de ltipo Carta
+        Tipo:Booleano
+    */
+    return(  numero(unaCarta) ==1)
+}
+
+//e.// esFigura_ que dada una carta, indica si la misma es una figura (las figuras son los 10s, los 11s y los 12s).
+
+function esFigura_(unaCarta){
+     /*
+        Proposito: Indica si el numero de la carta **unaCarta** es una figura
+        Precondicion:
+                    -**unaCarta**: Debe ser de ltipo Carta
+        Tipo:Booleano
+    */
+    return(  numero(unaCarta) >=10 && numero(unaCarta) <= 12)
+}
+
+//f. esDeOro_ que indica si la carta dada es de Oros.
+function esDeOro_(unaCarta){
+     /*
+        Proposito: Indica si la carta **unaCarta** es de oro
+        Precondicion:
+                    -**unaCarta**: Debe ser de ltipo Carta
+        Tipo:Booleano
+    */
+    return(  palo(unaCarta) == Oro)
+}
+//g. tieneUnNúmeroMásGrande_Que_ que dadas dos cartas indica si la primera carta tiene un
+//número más grande que la segunda.
+function tieneUnNúmeroMásGrande_Que_(primeraCarta,segundaCarta){
+    /*
+        Proposito: Indica si el numero de la carta **primeraCarta** es mayor que la carta **segundaCarta**
+        Precondicion:
+                    -**primeraCarta** y **segundaCarta**: Debe ser de ltipo Carta
+        Tipo:Booleano
+    */
+    return( numero(primeraCarta) > numero(segundaCarta) )    
+} 
+
+//h. sonDelMismoPalo_Y_ que dadas dos cartas, indica si estas tienen el mismo palo.
+function sonDelMismoPalo_Y_(primeraCarta,segundaCarta){
+   /*
+        Proposito: Indica si  las cartas **primeraCarta** y **segundaCarta** son del mismo palo
+        Precondicion:
+                    -**primeraCarta** y **segundaCarta**: Debe ser del tipo Carta
+        Tipo:Booleano
+    */ 
+    return( palo(primeraCarta) > palo(segundaCarta) )
+}
+//i. valorParaEnvidoDe_ que describa el número que aporta la carta dada en el canto del
+//envido. El número se corresponde al número de la carta, si la misma no es figura, y cero, si
+//fuera figura.
+function valorParaEnvidoDe_(unaCarta){
+    /*
+        Proposito: Describe el numero que aporta la carta *unaCarta* para el envido
+        Precondicion:
+                    -**unaCarta**: Debe ser del tipo Carta
+        Tipo:Numero
+    */ 
+    return( choose numero(unaCarta) when( not esUnaFigura_(unaCarta))
+                   0      otherwise   )
+}
+
+//Atención: Sí ya sabe jugar al truco, tenga en cuenta que se está preguntando el valor que aportaría una
+////única carta, no una jugada de multiples cartas.
+
+
+//j. mayorValorEntre_Y_ que describe el valor más grande entre dos cartas, según lo que aporta
+//cada una para el envido. Por ejemplo, si las cartas son un 7 y un 12, describe 7, pues el 12 no
+//aporta nada para el envido.
+
+
+//k. sumaParaElEnvidoCon_Y_ que dadas dos cartas, describe el número que tienen las mismas
+//para el envido. El envido se calcula como la suma los valores del envido de cada carta más 20,
+//si las cartas son del mismo palo, o como el mayor valor entre ellas, cuando son de distinto palo.
+//l. sonMejores_Y_Que_Y_ que dadas 4 cartas, donde las dos primeras son las cartas del primer
+//jugador para cantar envido, y las segundas dos las del segundo jugador, indica si el envido del
+//primer jugador es más grande que el envido del segundo jugador

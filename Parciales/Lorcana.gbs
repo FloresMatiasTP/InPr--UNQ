@@ -1,0 +1,116 @@
+Lorcana es un juego de cartas coleccionables en el que los jugadores asumen el rol de "Illumineers" y utilizan personajes de Disney para competir entre sí. El
+objetivo del juego es utilizar tus cartas para reunir "lore" (que serian los puntos) más rápidamente que tu oponente.
+
+type JugadorLorcana is record{
+    /*
+    PROPOSITO: Modelar un jugador del juego Lorcana.
+    INV. REP:
+        * **nombre** no es un string vacío.
+        * Hay un contador de tinta en **tintasAcumuladas** por cada color de tinta del juego
+        * **puntosDeLore** es mayor o igual a 0
+    */
+
+    field nombre            // String
+    field mazo              // [CartaLorcana]
+    field mano              // [CartaLorcana]
+    field tintasAcumuladas  // [ContadorDeTinta]
+    field puntosDeLore      // Número
+}
+
+type CartaLorcana is record{
+    /*
+    PROPOSITO: Modelar una carta del juego Lorcana
+    INV. REP:
+        * **nombre** no es un string vacío
+        * **valorDeTinta** es mayor a 0
+    */
+
+    field nombre       // String
+    field categoría    // CategoríaLorcana
+    field colorDeTinta // ColorTinta
+    field valorDeTinta // Número
+}
+
+type CategoríaLorcana is variant{
+    /*
+    PROPOSITO: Modelar las categorías de cartas del juego Lorcana
+    */
+
+    case Personaje   {}
+    case Acción      {}
+    case Canción     {}
+    case Objeto      {}
+    case Lugar       {}
+}
+
+type ContadorDeTinta is record{
+    /*
+    PROPOSITO: Modelar un contador de tinta del juego Lorcana.
+    INV. REP:
+        * **cantidad** es mayor o igual a 0
+    */
+
+    field cantidad  // Número
+    field color     // ColorTinta
+}
+
+type ColorTinta is variant{
+    /*
+    PROPOSITO: Modelar los colores de tinta del juego Lorcana.
+    */
+
+    case Ámbar      {}
+    case Amatista   {}
+    case Esmeralda  {}
+    case Rubí       {}
+    case Zafiro     {}
+    case Acero      {}
+}
+
+El tipo JugadorLorcana modela un jugador del juego. Inicialmente todos los jugadores comienzan sin puntos de lore ni tinta acumulada de ningún color (es decir,
+el campo puntosDeLore vale 0 y el campo cantidad de cada contador en tintasAcumuladas también). Al comenzar el juego, cada jugador toma 7 cartas de su mazo y las
+coloca en su mano. Las cartas se modelan con el tipo CartaLorcana. Las cartas pueden ser personajes, acciones, canciones, objetos o lugares. Cada carta tiene un
+nombre, una categoría, un color de tinta(alguno de los seis tipos de tinta modelados con el tipo ColorTinta) y un valor de tinta.
+Los jugadores juegan por turnos. Una de las acciones que los jugadores pueden hacer en cada turno es "cargar tinta". Este proceso consiste en descartar una
+carta de la mano para incrementar su reserva de tinta. Cuando esto pasa, la tinta acumulada del jugador aumenta tanto como el valor de tinta de la carta que
+se descartó
+
+1.
+Implementar la función jugador_TrasCargarTinta_ que toma un jugador y un color de tinta y describe el mismo jugador pero tras haber cargado tinta de ese
+color. En otras palabras, el jugador resultante debe tener las mismas cartas en la mano, excepto la que se descartó y su contador de tinta de ese color
+debe haber aumentado tanto como el valor de tinta de dicha carta. La carta de la mano que se debe descartar para cargar tinta es la más fuerte (aquella
+que tenga el mayor valor de tinta) de entre las que son del color de tinta dado. En caso de empate se puede descartar cualquiera de ellas. 
+Se provee la primitiva cantidadesDeTintas_ConColor_AumentadoEn_ que dada una lista de contadores de tinta (que se asume que contine uno por cada color), 
+un color de tinta y una cantidad, retorna la misma lista pero aumentando la cantidad de tinta del contador dado tanto como la cantidad dada.
+
+2.
+Implementar la función jugadores_TrasRondaDeTinta_ que toma una lista de jugador y un color de tinta y describe la misma lista de jugador pero donde cada
+jugador intentó cargar tinta descartando su carta más fuerte de entre las que son del color de tinda dado. Si un jugador no tiene cartas del color de tinta
+dado en su mano, en lugar de cargar tinta debe levantar la primera carta de su mazo y colocarla en su mano. Si tampoco tiene cartas en su mazo, entonces debe
+pasar (no hace nada).
+
+3.
+Considere la siguiente implementación, cuyo contrato es correcto:
+function hayCartaDeColor_QuePuedaJugar_(colorDeTinta, jugador){
+    /*
+    PROPOSITO: Indica si el jugador **jugador** tiene una carta jugable de colorTinta **colorDeTinta**
+    PARAMETROS:
+        * colorDeTinta: ColorTinta
+        * jugador: JugadorLorcana
+    PRECONDICIONES:
+        * NINGUNA
+    TIPO: Booleano
+    */
+
+    cartasDeColor := []
+    foreach carta in jugador{
+        cartasDeColor := cartasDeColor ++ singular_Si_(carta, esCarta_DeColorTinta_(carta, colorDeTinta))
+    }
+    return(not esVacía(cartasDeColor))
+}
+
+A) El código propuesto para la función, ¿es correcto respecto a su contrato? Es decir, ¿soluciona el problema planteado? JUSTIFICAR
+(la justificación no puede tener más de 3 renglones)
+
+B) Más allá de si el código es correcto o no, ¿es adecuada la solución planteada? Es decir, ¿se ajusta a los lineamientos vistos en la materia? JUSTIFICAR
+(la justificación no puede tener más de 3 renglones)

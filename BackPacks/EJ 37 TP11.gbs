@@ -1,0 +1,154 @@
+
+function singular_Si_(elemento, condición) {
+     /* PROPÓSITO: Describir una lista según el valor de la condición dada. 
+                  Si es verdadera, describe la lista singularcon **elemento**. Si no, describe la lista vacía.
+        PRECONDICIONES: Ninguna.
+        PARÁMETROS:
+            * elemento: De un tipo cualquiera.
+            * condición: Booleano.
+        TIPO: Lista del tipo de **elemento**.
+    */
+    return (choose [elemento] when (condición)
+                [] otherwise)
+}
+
+------------------------------EJERICIO 37----------------------
+-----------A-----------
+
+function losPrimeros_De_(indice, unaLista){
+    /*
+        PROPÓSITO:Describe los primeros *indice* elementos de la lista dada
+        PRECONDICIONES: Ls lista dada debe tener al menos *indice* elementos
+        PARÁMETROS:
+            * unaLista:  Lista de [Elemento]
+            *indice: Numero
+            
+        TIPO: Lista de [Elemento]
+        Observacion: 
+                    Es un recorrido de filtro
+                    sobre la lista dada
+                    filtrando los primero *indice* elementos de la lista dada
+    */
+    listaDeLosPrimeros := []
+    indiceAlMomento := 1
+    foreach elemento in unaLista{
+        listaDeLosPrimeros :=listaDeLosPrimeros ++ singular_Si_(elemento, indiceAlMomento <= indice)
+        indiceAlMomento :=indiceAlMomento + 1
+    }
+    return(listaDeLosPrimeros)
+}
+---------------------------------------------  B   ------------------------
+function lista_SinLosPrimeros_( unaLista, indice){
+    /*
+        PROPÓSITO:Describe los  elementos de la lista dada sin los primeros *indice* elementos
+        PRECONDICIONES: La lista dada debe tener al menos *indice* elementos
+        PARÁMETROS:
+            * unaLista:  Lista de [Elemento]
+            *indice: Numero
+            
+        TIPO: Lista de [Elemento]
+        Observacion: 
+                    Es un recorrido de filtro
+                    sobre la lista dada
+                    filtrando los elementos
+    */
+    listaSinLosPrimeros := []
+    indiceAlMomento := 1
+    foreach elemento in unaLista{
+        listaSinLosPrimeros := listaSinLosPrimeros ++ singular_Si_(elemento, indiceAlMomento > indice)
+        indiceAlMomento :=indiceAlMomento + 1
+    }
+    return(listaSinLosPrimeros)
+}
+------------------------------- C  ------------------------------------------
+
+function lista_AgrupadaDeA_(unaLista, numero){
+ /*
+        PROPÓSITO:Describe una lista de lista en donde cada lista interna es una agrupacion de *nnumero * elementos de la lista dada
+        PRECONDICIONES: La lista dada debe tener al menos *numero* elementos
+        PARÁMETROS:
+            * unaLista:  Lista de [Elemento]
+            *numero: Numero
+            
+        TIPO: Lista de Lista de [Elemento]
+        Observacion: 
+                    Es un recorrido de tranformacion
+                    sobre la lista dada
+                    agrupandolos de a *numero* elementos de una lista 
+    */
+     
+     listaDeAgrupadosAlMomento := []
+     listaARecorrer:= unaLista
+    while(not esVacía(listaARecorrer)  ){
+        listaDeAgrupadosAlMomento :=listaDeAgrupadosAlMomento ++ [ losPrimeros_De_(numero, listaARecorrer)]
+        listaARecorrer := lista_SinLosPrimeros_(listaARecorrer,numero ) 
+    }
+    return(listaDeAgrupadosAlMomento   )
+}
+--------------------------------------  D    ----------------------------
+
+function lista_Desagrupada(unaLista){
+    /*
+        PROPÓSITO:Describe una lista que contiene a todos los elementos de cada grupo de la lista dada
+        PRECONDICIONES: La lista dada no debe ser vacia
+        PARÁMETROS:
+            * unaLista:  Lista de [Elemento]
+            
+        TIPO: Lista  de [Elemento]
+        Observacion: 
+                    Es un recorrido de tranformacion
+                    sobre la lista dada
+                    desagrupando cada grupo interno de la lista
+    */
+     
+     listaDesagrupadaAlMomento := []
+     foreach elemento in unaLista{
+        listaDesagrupadaAlMomento := listaDesagrupadaAlMomento ++  elemento   
+         
+     }
+    return(listaDesagrupadaAlMomento)
+    
+}
+---------------------------------------  E  ------------------------------------
+
+function combinarCadaElementoDe_Con_(primerLista, segundaLista){
+    /*
+        PROPÓSITO:Describe una lista que contiene a todos los elementos de cada grupo de la lista dada
+        PRECONDICIONES: Las listas dadas deben tener la misma cantidad de elementos
+        PARÁMETROS:
+            * primerLista:  Lista de [Elemento]
+            *segundaLista: Mismo tipo que *primerLista*
+            
+        TIPO: Lista listas de [Elemento]
+        Observacion: 
+                    Es un recorrido de tranformacion
+                    sobre la lista dada
+                    combinando cada elemento el primer elemento de la  lista *primerLista* con el primer elemento de la lista *segundaLista*
+    */
+    /*listaCombinadaAlMomento := []
+    listaRestante := primerLista
+    sLista:= segundaLista
+    while(not esVacía(listaRestante) ){
+        listaCombinadaAlMomento :=listaCombinadaAlMomento ++ [ [primero(listaRestante)] ++ [primero(sLista)] ]
+        sLista := resto(segundaLista)
+        listaRestante := resto(listaRestante) 
+        
+    }
+    return(listaCombinadaAlMomento  )
+    */
+    listaCombinadaAlMomento := []
+    segundaListaARecorrer := segundaLista
+    foreach elemento in primerLista{
+        listaCombinadaAlMomento :=listaCombinadaAlMomento ++  ( [[elemento] ++  [primero(segundaListaARecorrer)]] )
+        segundaListaARecorrer := resto(segundaListaARecorrer)
+        
+    }
+    return(listaCombinadaAlMomento  )
+    
+}
+
+
+
+program{
+    return(  combinarCadaElementoDe_Con_([2, 15, 9], [7, 21, 3])  )
+}

@@ -1,0 +1,247 @@
+
+
+type TipoDePago is variant {
+/* PROP: modelar Tipos de pago aceptados */
+    case Tarjeta {}
+    case MartPago {}
+    case Efectivo {}
+}
+
+type Producto is record{
+    /* PROP: modelar productos
+       INV.REP.: precio > 0 */
+    field nombre // String
+    field marca // String
+    field precio // Número
+}
+
+function gaseosa(){
+    return( Producto( nombre <- "Gaseosa",
+                      marca <- "Coca cola",
+                      precio <- 3000 )
+    )
+}
+function alfajor(){
+    return( Producto( nombre <- "Alfajor",
+                      marca <- "Cap del Espacio",
+                      precio <- 1000 )
+    )
+}
+function galleta(){
+    return( Producto( nombre <- "Don Satur",
+                      marca <- "Don saturnino",
+                      precio <- 800 )
+    )
+}
+
+type Cliente is record {
+    /* PROP: modelar clientes */
+    field dni // String
+    field nombre 
+    field tipoDePago // TipoDePago
+    field productos // [Producto]
+}
+
+function matias(){
+    return(Cliente( dni <- "45580855",
+                    nombre <- "Matias",
+                    tipoDePago <- Tarjeta,
+                    productos <-[gaseosa(), alfajor()] )
+        )
+}
+function lautaro(){
+    return(Cliente( dni <- "12345",
+                    nombre <- "lautaro",
+                    tipoDePago <- Efectivo,
+                    productos <- [galleta() ])
+        )
+}
+function alejo(){
+    return(Cliente( dni <- "6789",
+                    nombre <- "Alejo",
+                    tipoDePago <- MartPago,
+                    productos <- [ alfajor() ] )
+        )
+}
+
+
+type Caja is record {
+    /*  PROP: modelar cajas
+        INV.REP.: número > 0
+        facturado >= 0 */
+    field numero // Número
+    field clientesEsperando // [Cliente]
+    field aceptaPagos // [TipoDePago]
+    field esRapida // Bool
+    field facturado // Número
+}
+
+function caja1(){
+    return( Caja ( numero <- 1,
+                    clientesEsperando <- [ matias(),lautaro(), alejo()],
+                    aceptaPagos <- [MartPago ],
+                    esRapida <- True,
+                    facturado <- 10000
+                ) 
+        )
+} 
+function caja2(){
+    return( Caja ( numero <- 2,
+                    clientesEsperando <- [ matias(), alejo()],
+                    aceptaPagos <- [Efectivo],
+                    esRapida <- False,
+                    facturado <- 20000
+                ) 
+        )
+} 
+function caja3(){
+    return( Caja ( numero <- 3,
+                    clientesEsperando <- [ matias()],
+                    aceptaPagos <- [ Tarjeta],
+                    esRapida <- False,
+                    facturado <- 20000
+                ) 
+        )
+}
+/*
+        Proposito:
+        Precondicion:
+        Parametros:
+        Tipo:
+        Observacion:
+    */
+    ----------------------------  EJERCICIO 2 A ---------------------------------------------------
+
+function cantidadDeClientesEsperandoEn_(unaCaja){
+    /*
+        Proposito:Describe cuantos clientes estan esperando en la caja dada
+        Precondicion:ninguno
+        Parametros: 
+                    - *unaCaja*: Caja
+        Tipo:Numero
+        Observacion:    
+                        Es un recrrido de acumulacion
+                        sobre los clientes esperando de la caja
+                        acumulando la cantidad de clientes espesrando
+    */
+    totalClientesEsperandoAlMomento := 0
+    foreach cliente in clientesEsperando(unaCaja){
+        totalClientesEsperandoAlMomento :=totalClientesEsperandoAlMomento + 1
+    }
+    return(totalClientesEsperandoAlMomento)
+    
+}
+
+-------------------------------  EJERCICIO 2 B---------------------------------------------------
+
+function cajaMenosOcupadaDe_(listaDeCajas){
+    /*
+        Proposito:Describe la caja con menos clientes esperando entre todas las de esa lista
+        Precondicion:ninguno
+        Parametros: 
+                    - *listaDeCajas*: Lista de Caja
+        Tipo:Caja
+        Observacion:    
+                        Es un recrrido de minimos-maximos
+                        sobre la lista dada
+                        buscando la caja que esta con menos clientes entre todas
+    */
+    cajaConMenorClientesAlMomento := primero (listaDeCajas)
+    foreach caja in listaDeCajas{
+        cajaConMenorClientesAlMomento := cajaConMenosClientesEntre_YEntre_(cajaConMenorClientesAlMomento, caja)
+    }
+    return(cajaConMenorClientesAlMomento)
+}
+
+function cajaConMenosClientesEntre_YEntre_(unaCaja, otraCaja){
+    return ( choose unaCaja  when(cantidadDeClientesEsperandoEn_(otraCaja) > cantidadDeClientesEsperandoEn_(unaCaja) )
+                    otraCaja otherwise
+           )
+}
+
+-------------------------------  EJERCICIO 2 C ---------------------------------------------------
+
+function gobsMart_conIngresoDe_aCaja_(listaDeCajas, unCliente, unNumeroDeCaja){
+ /*
+        Proposito:Describe la misma lista de cajas pero actualizando la caja del 
+                    número dado para registrar que el cliente dado ingresó en la misma
+        Precondicion:Debe existir una caja con el numero de caja *unNumeroDeCaja*
+        Parametros:
+                    -listaDeCajas :   Lista de Caja
+                    -unCliente:       Cliente
+                    -unNumeroDeCaja : Numero
+        Tipo:Lista De caja
+        Observacion:
+                     Es un recorrido de busqueda y tranformacion
+                     sobre las lista dada
+                     buscando el numero de caja dado y agregando al cliente a la caja buscada 
+    */   
+    listaRestante := listaDeCajas
+    listaDeCajasActualizada := []
+    while(not esVacía(listaRestante) ) {
+        listaDeCajasActualizada := listaDeCajasActualizada ++ singular_Si_(  
+                                                            ,numero(primero(listaRestante))== unNumeroDeCaja )
+        listaRestante := resto(listaRestante)
+    }
+    return ( listaDeCajasActualizada) 
+}
+function singular_Si_(listaRestante,unaCaja, condición) {
+     /* PROPÓSITO: Describir una lista según el valor de la condición dada. 
+                  Si es verdadera, describe la lista singularcon **elemento**. Si no, describe la lista vacía.
+        PRECONDICIONES: Ninguna.
+        PARÁMETROS:
+            * elemento: De un tipo cualquiera.
+            * condición: Booleano.
+        TIPO: Lista del tipo de **elemento**.
+    */
+    return (choose [ agregarCliente_ALaCaja_(cliente,primero(listaRestante) )] when (condición)
+                [clientesEsperando(unaCaja)] otherwise)
+}
+
+function agregarCliente_ALaCaja_(listaDeCaja,caja){
+    
+    return(   Caja( caja |clientesEsperando <- clientesEsperando(caja) ++  [unCliente] )
+          )
+}
+--Caja( primero(listaDeCaja) |clientesEsperando <- clientesEsperando(primero(listaDeCaja)) ++  [unCliente]
+-- modificarCaja_Si_(primero(listaRestante),unCliente, numero(primero(listaRestante)) == unNumeroDeCaja )
+-------------------------------  EJERCICIO 2 D ---------------------------------------------------
+
+-------------------------------  EJERCICIO 2 E ---------------------------------------------------
+
+
+-------------------------------  EJERCICIO 2 F ---------------------------------------------------
+
+
+-------------------------------  EJERCICIO 2 G ---------------------------------------------------
+
+
+
+/*
+        Proposito:
+        Precondicion:
+        Parametros:
+        Tipo:
+        Observacion:
+    */
+
+program{
+    
+    return(gobsMart_conIngresoDe_aCaja_( [caja1(), caja2(), caja3()], alejo(),3 ) )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

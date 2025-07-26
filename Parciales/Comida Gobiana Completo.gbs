@@ -1,0 +1,405 @@
+type ComidaGobiana is record {
+    /* PROPÓSITO: Modela una comida que come un gobiano.
+       INVARIANTES DE REPRESENTACIÓN:* calorías es un número mayor a cero. 
+       */
+       field nombre // tipo String
+       field origen // tipo Continente
+       field calorias // tipo Número
+}
+
+type Continente is variant {
+    /* PROPÓSITO: Modela un continente de donde puedeproceder una comida gobiana. 
+    */
+    case Africa {}
+    case America {}
+    case Asia {}
+    case Europa {}
+    case Oceania {}
+}
+
+function bolitasDeFraile() {
+    /*
+        Proposito:Describir la comida gobiana Bolitas de Fraile.
+        Precondicion:nignuno
+        Tipo: ComidaGobiana
+    */
+    return( ComidaGobiana ( nombre <- " Bolitas de Fraile",
+                            origen <- America,
+                            calorias <- 550    ) )
+}
+function bolitasDeQueso(){
+    /*
+        Proposito:Describir la comida gobiana Bolitas de Queso.
+        Precondicion:nignuno
+        Tipo: ComidaGobiana
+    */
+    return( ComidaGobiana ( nombre <- " Bolitas de Queso",
+                            origen <- Europa,
+                            calorias <- 150    ) )
+}
+-------------------------------------------------------------EJERCICIO 2------------------------------------
+
+function tiene_MásCaloriasQue_(primeraComidaGobiana, segundaComidaGobiana){
+    /*
+        Proposito:Indica si la comida gobiana *primeraComidaGobiana** tiene mas calorias que la comida **segundaComidaGobiana**
+        Precondicion:
+                    -**primeraComidaGobiana** y  **segundaComidaGobiana** no deben ser iguales
+        Tipo: Booleano
+        Parametros:
+                    -**primeraComidaGobiana**: ComidaGobiana 
+                    -**segundaComidaGobiana**: ComidaGobiana
+    */
+    return( calorias(primeraComidaGobiana) > calorias (segundaComidaGobiana) )    
+}
+-------------------------------------------------------------EJERCICIO 3-----------------------------------
+
+function comidaMásSaludableEntre_Y_(primeraComidaGobiana, segundaComidaGobiana){
+/*
+        Proposito:Describe  la comida gobiana con menos calorias entre *primeraComidaGobiana** y **segundaComidaGobiana**
+        Precondicion:
+                    -**primeraComidaGobiana** y  **segundaComidaGobiana** no deben ser iguales 
+        Tipo: ComidaGobiana
+        Parametros:
+                    -**primeraComidaGobiana**: ComidaGobiana 
+                    -**segundaComidaGobiana**: ComidaGobiana
+    */
+    return( choose   primeraComidaGobiana when(tiene_MásCaloriasQue_(segundaComidaGobiana,primeraComidaGobiana)  ) 
+                     segundaComidaGobiana otherwise          )
+    
+}
+-------------------------------------------------------------EJERCICIO 4----------------------------------
+function proviene_De_(unaComidaGobiana, unContinente){
+   /*
+        Proposito:Indica si la comida gobiana *unaComidaGobiana** proviene del continente *unContinente*
+        Precondicion:nignuno
+        Tipo: Booleano
+        Parametros:
+                    -**unaComidaGobiana**: ComidaGobiana 
+                    -**unContinente**: Continente
+    */  
+    return( origen(unaComidaGobiana) == unContinente)
+    
+} 
+-------------------------------------------------------------EJERCICIO 5-----------------------------------
+function comida_Enmantecada(unaComidaGobiana){
+   /*
+        Proposito:Describe una comida gbiana igual a la dada pero con las calorias aumentadas en 200
+        Precondicion:nignuno
+        Tipo: ComidaGobiana
+        Parametros:
+                    -**unaComidaGobiana**: ComidaGobiana 
+                    
+    */  
+    return( ComidaGobiana(unaComidaGobiana| calorias <- calorias(unaComidaGobiana) + 200 ) )
+    
+}  
+-------------------------------------------------------------EJERCICIO 6-----------------------------------
+function albondiga(){
+    /*
+        Proposito:Describir la comida gobiana Bolitas de Queso.
+        Precondicion:nignuno
+        Tipo: ComidaGobiana
+    */
+    return( ComidaGobiana ( nombre <- "Albondiga",
+                            origen <- Europa,
+                            calorias <- 3000    ) )
+}
+
+function albondigueada_(unaLista){
+     /*
+        Proposito:Describe una lista de 5 comidas gobianas donde todas las comidasson albóndigas provenientes de Europa,
+                            y donde tienen 300, 400, 500, 600 y 700calorías
+        Precondicion:nignuno
+        Tipo: Lista ComidaGobiana
+        Observacion: 
+                        Es un recorrido de transformacion
+                        sobre una lista de albondiga
+                        aumentado la calorias de a 100 empezando en 300
+                        
+                    
+    */
+    listaDeAlbondigasAlMomento := [ ]
+    caloriasAAumentar := 100
+    foreach albondiga in unaLista{
+        listaDeAlbondigasAlMomento := listaDeAlbondigasAlMomento ++ [ ComidaGobiana(albondiga()|calorias <- calorias(albondiga) + caloriasAAumentar)  ]
+        caloriasAAumentar := caloriasAAumentar + 100 
+    }
+ return(listaDeAlbondigasAlMomento)   
+}
+-------------------------------------------------------------EJERCICIO 7---------------------------------
+function contiene_A_(unaLista, unElemento) { 
+/* 
+    Prop:Indica si en la lista *unaLista* esta el elemento *unElemento* 
+    Prec:nignuna Tipo:Lsta de [Elemento] 
+    Parametro: 
+        **unaLista**: Lista del cualquier tipo 
+        **unElemento**: mismo tipo de la lista 
+    Observacion: 
+                Es un recorrido d busqueda
+                sobre lso elelmento de la lista
+                buscando si el elemento *unElemento* se encuentra en la lista 
+*/ 
+    listaRestante := unaLista 
+    while( not esVacía(listaRestante) && primero( listaRestante) /= unElemento ){
+        listaRestante := resto(listaRestante) 
+    }
+    return( not esVacía(listaRestante)) 
+    
+}
+function hayUnaBolitaDeFraileEn_(unaLista){
+    /*
+        Proposito:Indica si en la lista dada hay una bolita de fraile
+        Precondicion:nignuno
+        Tipo: Booleano
+        Parametros: **unaLista**: Lista de ComidaGobiana
+        Observacion: 
+                        Es un recorrido de busqueda
+                        sobre la lista de comida
+                        buscando si hay alguna  bolita de fraile
+    */
+    listaARecorrer:= unaLista
+    while(not esVacía(listaARecorrer) && not contiene_A_(listaARecorrer, bolitasDeFraile()) ){
+        listaARecorrer := resto(listaARecorrer) 
+    }
+    return(not esVacía(listaARecorrer))
+} 
+-------------------------------------------------------------EJERCICIO 9-----------------------------
+function comidasDe_Enmantecadas(unaLista){
+     /*
+        Proposito:Describe una lista de 5 comidas gobianas donde todas las comidasson albóndigas provenientes de Europa,
+                            y donde tienen 300, 400, 500, 600 y 700calorías
+        Precondicion:nignuno
+        Tipo: Lista ComidaGobiana
+        Parametro: unaLista: Lista de Comida Gobiana 
+        Observacion: 
+                        Es un recorrido de transformacion
+                        sobre una lista de comida
+                        enmantecando cada comida de la lista
+                        
+                    
+    */
+    listaDeComidaEnmantecada :=[]
+    foreach comida in unaLista{
+        listaDeComidaEnmantecada := listaDeComidaEnmantecada ++ [comida_Enmantecada(comida)  ]
+    }
+ return(listaDeComidaEnmantecada)   
+}
+
+-------------------------------------------------------------EJERCICIO 10----------------
+function singular_Si_(elemento, condición) {
+     /* PROPÓSITO: Describir una lista según el valor de la condición dada. 
+                  Si es verdadera, describe la lista singularcon **elemento**. Si no, describe la lista vacía.
+        PRECONDICIONES: Ninguna.
+        PARÁMETROS:
+            * elemento: De un tipo cualquiera.
+            * condición: Booleano.
+        TIPO: Lista del tipo de **elemento**.
+    */
+    return (choose [elemento] when (condición)
+                [] otherwise)
+}
+
+
+function comidasPulentaDe_(unaLista){
+    /*
+        Proposito:Describe una lista de  comidas gobianas solo con las comidad que tienen mas de 500 calorias,
+                            
+        Precondicion:nignuno
+        Tipo: Lista ComidaGobiana
+        Parametro: unaLista: Lista de Comida Gobiana 
+        Observacion: 
+                        Es un recorrido de filtrp
+                        sobre una lista de comida
+                        filtrando las comidad que tenga ams de 500 calorias
+                    
+    */
+    listaConComidasPulentasAlMomento :=[]
+    foreach comida in unaLista{
+        listaConComidasPulentasAlMomento :=listaConComidasPulentasAlMomento ++ singular_Si_(comida, calorias(comida)>500) 
+    } 
+    return(listaConComidasPulentasAlMomento)
+} 
+-------------------------------------------------------------EJERCICIO 11----------------
+type ChefGobiano is record {
+    //PROPÓSITO: Modela un chef de comida gobiana.
+    field nombre // tipo String
+    field recetas // tipo Lista de ComidaGobiana
+}
+function simonBolitas(){
+     /*
+        Proposito:Describe al chef con su repertorio de comidas, que incluyen solamente las bolitas de fraile y las bolitas de queso
+        Precondicion:nignuno
+        Tipo: ChefGobiano
+    */
+    return( ChefGobiano( nombre <- "Simon Bolitas", 
+                         recetas <-    [bolitasDeFraile(), bolitasDeQueso()] )
+          )
+    
+} 
+----------------------------------  EJERCICIO 12 - -----------------------------------------
+function elChefEsMuyLight_(unChef){
+    /*
+        Proposito:Indica si ninguna comida del chef dado es pulenta
+        Precondicion:
+        Tipo: Booleano
+    */
+    return(esVacía(comidasPulentaDe_(recetas(unChef)))  )
+} 
+
+----------------------------------  EJERCICIO 13 - ----------------------------------------
+function cantidadDeComidasPulentaDe_(unChef){
+     /*
+        Proposito:Describe todas las comidad pulentas que sabe preparar el chef dado
+        Precondicion:nignuno
+        Tipo: Numero
+    */
+    cantidadDeComidaPulentas := 0
+    foreach comida in recetas(unChef){
+        cantidadDeComidaPulentas := cantidadDeComidaPulentas + unoSi_CeroSiNo( calorias(comida) > 500)
+    }
+    return(cantidadDeComidaPulentas )
+}
+function unoSi_CeroSiNo(condicion){
+    /*
+        Proposito: Describe 1 si cumple la condicion *condicion* y sino cumple la condicion describe 0
+        Precondicion:ninguno
+        Parametros:*condicion* : Booleano
+        Tipo:Numero
+    */    
+    return ( choose 1 when(condicion)
+                    0 otherwise 
+            )
+}
+----------------------------------  EJERCICIO 14 - ----------------------------------------
+
+function comidasDe_DelChef_(unContinente, unChef){
+     /*
+        Proposito: Describe la lista de comidas que prepara el chef que son  del continente dado
+        Precondicion:ninguno
+        Parametros:
+                -*unContinente* : String
+                -*unChef*: ChefGobiano
+        Tipo:Lista de  ComidaGobiana
+        Observacion:
+                    Es un recorrido se filtro
+                    sobre la lista de comidad del chef
+                    filtrando la comida que son del continente dado
+    */
+    listaDeComidadDelContinente := []
+    foreach comida in recetas(unChef){
+        listaDeComidadDelContinente :=listaDeComidadDelContinente ++ singular_Si_(comida, origen(comida)== unContinente )    
+    }
+    return( listaDeComidadDelContinente )
+}
+----------------------------------  EJERCICIO 15 - ----------------------------------------
+
+function chef_ConSuMenuEnmantecado(unChef){
+    /*
+        Proposito: Describe al chef con la totalidad de sus recetas enmantecadas
+        Precondicion:ninguno
+        Parametros:
+                -*unChef*: ChefGobiano
+        Tipo:Lista de  ComidaGobiana
+        Observacion: 
+                    Es un recorrido e tranformacion
+                    sobre la lista de comidad del chef
+                    enmantecando cada comida que prepara el chef dado
+    */
+    listaDeComidasEnmantecadas :=[]
+    foreach comida in recetas(unChef){
+        listaDeComidasEnmantecadas :=listaDeComidasEnmantecadas ++  [comida_Enmantecada(comida)] 
+    }
+    return(listaDeComidasEnmantecadas)
+}
+
+----------------------------------  EJERCICIO 16 - ------------------------------------
+
+function nombreDelChefEn_QuePrepara_(listaDeChefs, unaComida){
+/*
+        Proposito: Describe el nombre del chef que prepara dichacomida
+        Precondicion:ninguno
+        Parametros:
+                -*listaDeChefs*: Lista de Chef
+                -*unaComida*: ComidaGobiana
+        Tipo:Lista de  Chef
+        Observacion: 
+                    Es un recorrido de busqueda
+                    sobre la lista de chef
+                    buscando al chef que prepara la comida dada
+    */
+    listaARecorrer := listaDeChefs
+    while(not  elChef_PreparaLaComida_(primero(listaARecorrer), unaComida)   ){
+        listaARecorrer:= resto(listaARecorrer)
+    }
+    return(primero(listaARecorrer) )
+}    
+
+function elChef_PreparaLaComida_(unChef, unaComida){
+    
+    
+    return( primero(recetas(unChef)) == unaComida )
+}
+
+function simonAl(){
+     /*
+        Proposito:Describe al chef con su repertorio de comidas, que incluyen solamente las bolitas de fraile y las bolitas de queso
+        Precondicion:nignuno
+        Tipo: ChefGobiano
+    */
+    return( ChefGobiano( nombre <- "Simon Alb", 
+                         recetas <-    [albondiga(),bolitasDeFraile()] )
+          )
+    
+}
+function gastonBolitas(){
+     /*
+        Proposito:Describe al chef con su repertorio de comidas, que incluyen solamente las bolitas de fraile y las bolitas de queso
+        Precondicion:nignuno
+        Tipo: ChefGobiano
+    */
+    return( ChefGobiano( nombre <- "Gaston Bolitas", 
+                         recetas <-    [bolitasDeFraile(),albondiga(),albondiga(),albondiga(), bolitasDeQueso()] )
+          )
+}
+----------------------------- EJERCICIO 17 -----------------------------------------
+function nombreDeChefMásPulentaEn_(listaDeChefs){
+/*
+        Proposito: Describe el nombre del chef que prepara la mayor de comidad pulentas
+        Precondicion:Debe  haber un chef que prepara l amayor cantida de comida pulentas
+        Parametros:
+                -*listaDeChefs*: Lista de Chef
+             
+        Tipo:  Chef
+        Observacion: 
+                    Es un recorrido de Maximo/minimos
+                    sobre la lista de chef
+                    buscando al chef que prepara mas comidas pulentas
+    */
+    chefMasPulenta := primero(listaDeChefs)
+    foreach chef in listaDeChefs{
+        chefMasPulenta := chefMasPulentaEntre_Y_(chefMasPulenta, chef  )
+    }
+    return(chefMasPulenta )
+}    
+function chefMasPulentaEntre_Y_(primerChef, segundoChef){
+    /*
+        Proposito: Describe al chef que prepara la comida ams pulenta entre los dos chef dados
+        Precondicion:Debe  haber un chef que prepara l amayor cantida de comida pulentas
+        Parametros:
+                -*primerChef* *segundoChef*:   Chef
+             
+        Tipo:  Chef
+       
+    */
+    return( choose  primerChef when ( cantidadDeComidasPulentaDe_(primerChef) > 
+                                       cantidadDeComidasPulentaDe_(segundoChef))
+                    segundoChef otherwise  
+          )
+}
+
+
+
+program{
+    
+    return(nombreDeChefMásPulentaEn_( [gastonBolitas(),simonBolitas(), simonAl()] ) )
+}

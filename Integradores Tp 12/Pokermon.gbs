@@ -1,0 +1,164 @@
+type TipoDePókemon is variant{
+    /* PROPÓSITO: Modelar los tipos de Pókemon posibles */
+    case Tierra {}
+    case Agua {}
+    case Fuego {}
+}
+
+type Pokemon is record {
+    /* PROPÓSITO: Modelar un Pókemon
+    INV.REP.: * La fuerza y el nivel son mayores o iguales a 0
+        * Si está debilitado (estáSaludable es falso), su
+        fuerza es cero */
+    field tipo // TipoDePókemon
+    field fuerza // Número
+    field estaSaludable // Booleano.
+    field nivel // Número
+}
+
+function pokemon1(){
+    return( Pokemon( tipo <- Tierra,
+                     fuerza <- 200,
+                     estaSaludable <- True,
+                     nivel <- 5)
+       )
+}
+function pokemon2(){
+    return( Pokemon( tipo <- Agua,
+                     fuerza <- 2000,
+                     estaSaludable <- True,
+                     nivel <- 50)
+       )
+}
+-------------------------------  EJERCICIO 1 A ---------------------------------------------------
+function es_MásFuerteQue_( primerPokemon,segundoPokemon){
+    /*
+        Proposito:Indica si el primer pkermon es mas fuerte que el segundo
+        Precondicion:los pokemones tiene que ser diferentes
+        Parametros: 
+                -primerPokemon: Pokemon
+                -segundoPokemon: Pokemon
+        Tipo:Boolenao
+        Observacion:
+    */
+    return( fuerza(primerPokemon)  > fuerza(segundoPokemon))
+}
+-------------------------------  EJERCICIO 1 B ---------------------------------------------------
+function esDeMayorNivel_Que_( primerPokemon,segundoPokemon){
+    /*
+        Proposito:Indica si el si el primero tiene un nivel más alto que el segundo
+        Precondicion:los pokemones tiene que ser diferentes
+        Parametros: 
+                -primerPokemon: Pokemon
+                -segundoPokemon: Pokemon
+        Tipo:Boolenao
+        Observacion:
+    */
+    return( nivel(primerPokemon)  > nivel(segundoPokemon))
+}
+-------------------------------  EJERCICIO 1 C ---------------------------------------------------
+function pókemon_PotenciadoEn_(unPokemon, potenciador){
+    /*
+        Proposito:Describe el mismo pokemon dado  con su fuerza y nivel multiplicados por *potenciador*
+        Precondicion:
+                    - *potenciador* debe ser mayor a 1
+        Parametros: 
+                -primerPokemon: Pokemon
+                -potenciador: Numero
+        Tipo:Pokemon
+     
+    */
+    return(Pokemon ( unPokemon|  fuerza <- (fuerza(unPokemon) * potenciador),
+                                 nivel <- nivel(unPokemon) * potenciador
+                            )
+            )
+}
+
+-------------------------------  EJERCICIO 1 D  ---------------------------------------------------
+
+function pókemon_ConValoresDuplicados(unPokemon){
+    /*
+        Proposito:Describe el mismo pokemon dado  con su fuerza y nivel duplicados
+        Precondicion:
+
+        Parametros: 
+                -primerPokemon: Pokemon
+            
+        Tipo:Pokemon
+     
+    */
+    return(Pokemon ( unPokemon|  fuerza <- (fuerza(unPokemon) * 2),
+                                 nivel <- nivel(unPokemon) * 2
+                            )
+            )
+}
+-------------------------------  EJERCICIO 1 E ---------------------------------------------------
+function pókemon_PotenciadoEn_SiEsDeTipo_(pokemon, factor, tipoPokemon){
+    /*
+        Proposito:Describe el Pokémon resultante depotenciar al pokemon dado según el factor dado,
+                     solamente si es del tipo dado, y el original si no
+        Precondicion: 
+                    -*factor* tiene que ser mayor a 1
+        Parametros: 
+                -pokemon: Pokemon
+                -factor : Numero
+                -tipoPokemon: TipoDePókemon
+        Tipo:Pokemon
+    */
+    return( choose  pókemon_PotenciadoEn_(pokemon, factor) when(tipo(pokemon) == tipoPokemon)
+                    pokemon otherwise
+        
+        )
+}
+-------------------------------  EJERCICIO 1 F ---------------------------------------------------
+
+function pókemon_Derrotado(unPokemon){
+    /*
+        Proposito:Describe el pokemon resultante de dibilitar al pokemon dado
+        Precondicion:
+        Parametros: 
+                -primerPokemon: Pokemon
+        Tipo:Pokemon
+    */
+    return(Pokemon ( unPokemon|  fuerza <- 0,
+                                 estaSaludable <- False
+                    )
+            )
+}
+-------------------------------  EJERCICIO 2 A ---------------------------------------------------
+function pókemonDe_Entrenados_(listaPokemones, numero){
+    /*
+        Proposito:Describe la lista resultante de potenciar cada Pókemon de la lista dada en la cantidad dada.
+        Precondicion:
+                    -*numero* debe ser mayor a 1
+        Parametros: 
+                    -listaPokemones: lista de Pokemon
+                    -*numero*: Numero
+        Tipo:LIsta de Pokemon
+        Observacion: 
+                    Es un recorrido de transformacion
+                    sobre la lista dada
+                    potenciando cada pokemon su fuerza y nivel
+        
+    */
+    listaDePokemonesEntrenamos := []
+    foreach pokemon in listaPokemones{
+        listaDePokemonesEntrenamos :=listaDePokemonesEntrenamos ++  [pókemon_PotenciadoEn_(pokemon, numero)]
+    }
+    return(listaDePokemonesEntrenamos)
+}
+-------------------------------  EJERCICIO 2 B ---------------------------------------------------
+
+
+-------------------------------  EJERCICIO 2 C ---------------------------------------------------
+
+
+-------------------------------  EJERCICIO 2 D ---------------------------------------------------
+
+
+-------------------------------  EJERCICIO 2 E ---------------------------------------------------
+
+
+program{
+    return( pókemonDe_Entrenados_([ pokemon1(),pokemon2()],4 ) )
+}

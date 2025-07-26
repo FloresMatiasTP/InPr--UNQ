@@ -1,0 +1,127 @@
+
+---------------------- EJERCICIO 1----------------------------------------
+type DíaDeLaSemana is variant{
+    /*
+        Prop: Modelas lso dias de al semana
+    */
+    case Lunes
+    case Martes
+    case Miercoles
+    case Jueves
+    case Viernes
+    case Sabado
+    case Domingo
+}
+
+function díaSiguiente_(unDia){
+    /*
+        Prop: Describe el dia siguiente de *unDia*
+        Precondicion:ninguno
+        Parametro: *unDia* : Dia
+        Tipo: Dia
+    */
+    return(choose  Martes    when ( unDiaDeLaSemana == Lunes)
+                    Miercoles when (unDiaDeLaSemana ==Martes)
+                    Jueves    when (unDiaDeLaSemana ==Miercoles)
+                    Viernes   when (unDiaDeLaSemana ==Jueves)
+                    Sabado    when (unDiaDeLaSemana ==Viernes)
+                    Domingo   when (unDiaDeLaSemana ==Sabado)
+                    Lunes     otherwise
+    )
+}
+
+function díaPrevio_(unDia){
+    /*
+        Prop: Describe el dia previo de *unDia*
+        Precondicion:ninguno
+        Parametro: *unDia* : Dia
+        Tipo: Dia
+    */
+    return(choose   
+                    Lunes     when ( unDiaDeLaSemana == Martes)
+                    Martes    when ( unDiaDeLaSemana == Miercoles)
+                    Miercoles when (unDiaDeLaSemana ==Jueves)
+                    Jueves    when (unDiaDeLaSemana ==Viernes)
+                    Viernes   when (unDiaDeLaSemana ==Sabado)
+                    Sabado    when (unDiaDeLaSemana ==Domingo)
+                    Domingo   otherwise
+    )
+    
+}
+function esFinDeSemana_(unDia){
+    /*
+        Prop:  Indica si el día *unDia*  es uno de los dias del fin de semana
+        Precondicion:ninguno
+        Parametro: *unDia* : Dia
+        Tipo: Boolenao
+    */
+    return ( unDia == Sabado || unDia== Domingo)
+   
+}
+
+---------------------- EJERCICIO 2----------------------------------------
+
+type PartidoPolitico is variant{
+    /*
+        Prop:  Moelar los partidos politcos
+        
+    */
+    
+    case Democracia por la Verdad,
+    case Unidos por la República,
+    case Liberales por la Libertad,
+    case Izquierda de los Obreros
+}
+---------A---------
+function tieneMásVotantes_Que_(primerPP,segundoPP){
+    /*
+        Prop:  Indica si el pp *primerPP* tiene mas votantes que *segundoPP*
+        Precondicion:ninguno
+      
+        Tipo: Boolenao
+    */
+    return( cantidadDeVotosDe_(primerPP) > cantidadDeVotosDe_(segundoPP))
+}
+
+function elQueTieneMásVotos(){
+    /*
+        Prop:  Describe le pp que tiene mas votos 
+        Precondicion:ninguno
+        Tipo: PartidoPolitoco
+    Observacion: Es un recorrido de busqueda  sobre los partidos politicos 
+                     en donde se busca el PP que tenga mas votantes
+    */
+    partidoPoliticoActual := DemocraciaPorLaVerdad
+    partidoPoliticoConMasVotosAlMomento := partidoPoliticoActual
+    while (partidoPoliticoActual /=  IzquierdaDeLosObreros){
+        partidoPoliticoActual := partidoPoliticoSiguienteDe_(partidoPoliticoActual)
+        partidoPoliticoConMasVotosAlMomento := partidoConMasVotosEntre_Y_(partidoPoliticoActual, partidoPoliticoConMasVotosAlMomento)
+    }
+    return(partidoPoliticoConMasVotosAlMomento)
+
+}
+function partidoPoliticoSiguienteDe_(unPartidoPolitico){
+    /*
+        Proposito: Describe el siguiente Partido Politico de **unPartidoPolitico**
+        Precondicion:Ninguna
+        Parametro: **unPartidoPolitico**: PartidoPolitico
+        Tipo: PartidoPolitico
+    */
+     return( choose UnidosPorLaRepública   when (unPartidoPolitico == DemocraciaPorLaVerdad )
+                    LiberalesPorLaLibertad when (unPartidoPolitico == UnidosPorLaRepública)   
+                    IzquierdaDeLosObreros  when (unPartidoPolitico ==LiberalesPorLaLibertad)  
+                    DemocraciaPorLaVerdad  otherwise
+     )
+}
+function partidoConMasVotosEntre_Y_(unPP,otroPP){
+    
+    return ( choose unPP when( cantidadDeVotosDe_(unPP) > cantidadDeVotosDe_(otroPP)
+                    otroPP otherwise
+    )
+}
+
+
+
+
+
+

@@ -1,0 +1,269 @@
+type LigaFemenina is record {
+ /*
+    Proposito: Modelar una liga femenina de futbol.
+    In Rep:
+        * la lista de **equipos** no tiene equipos con el mismo nombre
+        * la lista de **sponsor** no tiene sponsor con el mismo nombre
+        * todos los equipos de la lista **equipos** es apoyado por uno o
+            más responsable de la lista **sponsors**
+        * cada nombre de sponsor que apoya a un equipo de la lista de **equipos**
+            corresponde al nombre de un sponsor de la lista de **sponsor**
+ */
+    field sponsors // [sponsor]
+    field equipos // [Equipo]
+}
+function ligaAr(){
+    return(LigaFemenina( sponsors <- [betson(), codere(), nike(), adidas(),puma(),gatorade() ] ,
+                         equipos <-[boca(),river(),racing(), sanL() ]
+                         )
+        )
+    
+}
+
+type Equipo is record {
+ /*
+    Proposito: Modelar un equipo de la liga
+    In Rep:
+        * **nombre** no es un string vacio
+        * la lista **nombreDeSponsors** no �ene Repe�dos.
+ */
+    field nombre // string
+    field nombreDeSponsors // [string]
+}
+
+function boca(){
+    return( Equipo(  nombre <-"Boca",
+                     nombreDeSponsors <-[betson(), adidas(), gatorade()]
+                      )
+        
+        )
+}
+function river(){
+    return( Equipo(  nombre <-"River",
+                     nombreDeSponsors <-[adidas(),codere() ]
+                      )
+        
+        )
+}
+function racing(){
+    return( Equipo(  nombre <- "Racing",
+                     nombreDeSponsors <-[ nike(),puma() ]
+                      )
+        
+        )
+}
+function sanL(){
+    return( Equipo(  nombre <- "San lorenzo",
+                     nombreDeSponsors <-[gatorade()]
+                      )
+        )
+}
+
+type Sponsor is record {
+ /*
+    Proposito: Modelar un sponsor.
+    Inv. Rep.:
+        * **nombre** no es un string vacio
+        * **montoAportado** es mayor a cero.
+*/
+    field nombre //String
+    field rubro // Rubro
+    field montoAportado // Numero
+}
+type Rubro is variant {
+ /*
+    Proposito: losrobros de los sponsors de la liga
+ */
+    case Cripto { }
+    case Seguros { }
+    case Bebidas { }
+    case Salud { }
+    case Automotriz { }
+    case Ropa{}
+}
+function betson(){
+    return(Sponsor( nombre <- "Betson",
+                    rubro <- Cripto,
+                    montoAportado <- 10000
+                    )
+           )
+}
+function codere(){
+    return(Sponsor( nombre <- "Codere",
+                    rubro <- Cripto,
+                    montoAportado <- 20000
+                    )
+           )
+}
+function adidas(){
+    return(Sponsor( nombre <- "Adidas",
+                    rubro <- Ropa,
+                    montoAportado <- 30000
+                    )
+           )
+}
+function nike(){
+    return(Sponsor( nombre <- "Nike",
+                    rubro <- Ropa,
+                    montoAportado <- 40000
+                    )
+           )
+}
+function puma(){
+    return(Sponsor( nombre <- "Puma",
+                    rubro <- Ropa,
+                    montoAportado <- 45000
+                    )
+
+           )
+}
+function gatorade(){
+    return(Sponsor( nombre <- "Gatorade",
+                    rubro <- Bebidas,
+                    montoAportado <- 50000
+                    )
+           )
+}
+
+
+---------------------------------------------------------------------------------------------------------------------------
+/*
+Punto 1)
+Cuando un sponsor re�tia su apoyo a una liga de fútbol femenino, debe removerse de la liga toda referencia a dicho
+sponsor. Por lo cual se pide que implemente la función liga_SinSponsorLlamado_ que dada una liga y el nombre de un sponsor
+existente en la liga, describe la liga que resulta de quitar ese sponsor de la lista de sponsor de la liga, así como de todos aquellos
+equipos que puedan tenerlo como sponsor.
+Pista: Recuerde que funciones de biblioteca �enen disponibles para usar al procesar lista
+
+
+*/
+
+function liga_SinSponsorLlamado_(unaLiga, nombreSponsor){
+    /*
+        Proposito:Describe la liga dada al sin el sponsor dado
+        Parametros:
+                    -*unaLiga*: ligaFemenina
+                    -**nombreSponsor*- String
+        Precondicion:
+                -*nombreSponsor* Debe ser un sponsor de la liga dada
+        Tipo:LigaFemenina
+    */
+    return(
+            LigaFemenina(unaLiga |  sponsors <- sponsorsDe_Sin_( unaLiga, nombreSponsor ),
+                                    equipos <- equiposDeLaLiga_Sin_( unaLiga, nombreSponsor )
+                        )
+        )
+}
+
+function  sponsorsDe_Sin_( unaLiga, nombreSponsor ){
+    /*
+        Proposito:Describe los sponsors  de la liga dada  sin el sponsor dado
+        Parametros:
+                    -*unaLiga*: ligaFemenina
+                    -**nombreSponsor*- String
+        Precondicion:
+                -*nombreSponsor* Debe existir en  la liga dada
+        Tipo:Lista  Sponsor
+    */
+    sponsorsFiltradosAlMomento := []
+    foreach sponsor in sponsors(unaLiga) {
+        sponsorsFiltradosAlMomento := sponsorsFiltradosAlMomento ++
+                singular_Si_(sponsor, nombre(sponsor) /= nombreSponsor )
+    }
+    return (sponsorsFiltradosAlMomento)
+}
+function equiposDeLaLiga_Sin_(unaLiga, nombreSponsor){
+    /*
+        Proposito:Describe los equipos  de la liga dada  sin el sponsor dado
+        Parametros:
+                    -*unaLiga*: ligaFemenina
+                    -**nombreSponsor*- String
+        Precondicion:
+                -*nombreSponsor* Debe existir en  la liga dada
+        Tipo:Lista  De Equipo
+    */
+    equiposSinElSponsorAlMomento :=[]
+    foreach equipo in equiposDe_ConElSponsor_(unaLiga, nombreSponsor){
+        equiposSinElSponsorAlMomento := equiposSinElSponsorAlMomento ++ [equipo_Sin_(equipo, nombreSponsor) ]      
+   }
+   return(equiposSinElSponsorAlMomento ) 
+    
+}
+function  equiposDe_ConElSponsor_(unaLiga, nombreSponsor){
+    esquiposConSporsorAlMomento :=[]
+    foreach equipo in equipos(unaLiga){
+        esquiposConSporsorAlMomento := esquiposConSporsorAlMomento ++ 
+                                               singular_Si_(equipo, esEquipo_ConSponsor_(equipo, nombreSponsor)   )      
+    }
+    return(esquiposConSporsorAlMomento)
+}
+function esEquipo_ConSponsor_(equipo, nombreSponsor ){
+    listaDeSponsorRestante := nombreDeSponsors(equipo)
+    while (not esVacía(listaDeSponsorRestante) && not  nombre(primero(listaDeSponsorRestante)) ==  nombreSponsor){
+        listaDeSponsorRestante := resto(listaDeSponsorRestante )
+    }
+    return( not esVacía(listaDeSponsorRestante) )
+}
+
+function equipo_Sin_(unEquipo, unSponsor){
+    return( Equipo(unEquipo | nombreDeSponsors <- sponsorsDeEquipo_Sin_(unEquipo, unSponsor)  ) )
+}
+
+function sponsorsDeEquipo_Sin_(unEquipo, unSponsor){
+    sponsorsDelEquipoAlMomento :=[]
+    foreach sponsor in nombreDeSponsors(unEquipo){
+        sponsorsDelEquipoAlMomento := sponsorsDelEquipoAlMomento ++   singular_Si_(sponsor, nombre(sponsor) /= unSponsor)  
+    }
+    return(   sponsorsDelEquipoAlMomento    )
+}
+-------------------------------------------------------------------------------------------------------
+/*Punto 2)
+En general los sponsor prefieren evitar publicitar en ligas que tengan mucha presencia de la competencia. Por eso, a la hora de
+decidir a qué liga apoyar buscan aquellas que tengan el menor número de equipos con sponsor de su mismo rubro. Se pide entonces que
+implemente la función mejorLigaEntre_ParaSponsor_(){
+    
+} que dados una lista de ligas femeninas y un sponsor, describa a aquella liga de entre
+las dadas que �ene el menor número de equipos con sponsors del rubro del sponsor dado.
+*/
+function mejorLigaEntre_ParaSponsor_(listaDeLiga, sponsor){
+    /*
+        Proposito:Describe aquella liga de entre las dadas que tiene el menor número de equipos con sponsors del rubro del sponsor dado.
+        Parametros:
+                    -*listaDeLiga*: lista de ligaFemenina
+                    -**nombrsponsoreSponsor*- Sponsor
+        Precondicion:
+        Tipo:ligaFemenina
+        Observacion:  Es un recorrido de maximo y minimo
+                      sobre la lista dada
+                      buscando a la liga que tenga menor equipos del rubro dle sponsor dado
+    */
+    mejorLigaParaPublicitarAlMomento := primero(listaDeLiga)
+    foreach liga in listaDeLiga{
+        mejorLigaParaPublicitarAlMomento := mejorLigaEntre_Y_(mejorLigaParaPublicitarAlMomento, liga)
+    }
+    return(mejorLigaParaPublicitarAlMomento)
+    
+}
+
+function mejorLigaEntre_Y_ParaSponsor_(primeraLigaF, segundaLigaF,sponsor){
+    /*
+        Proposito:Describe la mejor liga para publicitar entre *primeraLigaF* y *segundaLigaF*
+        Parametros:
+                    -*primeraLigaF*: ligaFemenina
+                    -**primeraLigaF*: ligaFemenina
+        Precondicion:
+        Tipo:ligaFemenina
+    */
+    return( choose  primeraLigaF when(cantidadDeEquiposDe_DelRubro_(primeraLigaF, ) < cantidadDeEquiposDe_DelRubro_(segundaLigaF) )
+                    segundaLigaF otherwise    
+          )
+    
+}
+
+
+----------------------------------------------------------------------------------------------------------------------
+program {
+    return( liga_SinSponsorLlamado_( ligaAr(), "Adidas" ) )
+    
+}
+

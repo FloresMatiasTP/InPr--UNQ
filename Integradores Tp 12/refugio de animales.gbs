@@ -1,0 +1,153 @@
+type Refugio is record { /*
+    PROPÓSITO: Modelar un refugio de animales.
+    INV. REP.:
+        * La lista **animales** no tiene animales con el mismo nombre.
+        * La lista **cuidadores** no tiene cuidadores con el mismo nombre.
+        * Todo animal de la lista **animales** tiene asignado uno o más
+            cuidadores de la lista **cuidadores**.
+        * Cada nombre de animal asignado a un cuidador de la lista
+        **cuidadores** corresponde al nombre de un animal de la lista **animales**.
+*/
+    field animales // [Animal]
+    field cuidadores // [Cuidador]
+}
+type Especie is variant { 
+/*
+    PROPÓSITO: Modelar las especies de animales del refugio.
+    */
+    case Yaguareté {}
+    case Vicuña {}
+    case Yarará {}
+    case Hornero {}
+    case Condor {}
+    case Carpincho {}
+}
+type Cuidador is record { 
+/*
+    PROPÓSITO: Modelar un cuidador de animales.
+    INV.REP.:
+        * **nombre** no es un string vacío.
+        * La lista **nombresACargo** no tiene repetidos.
+*/
+    field nombre // String
+    field nombresACargo // [String]
+}
+type Animal is record { 
+/*
+    PROPÓSITO: Modelar un animal.
+    INV. REP.:
+        * **nombre** no es un string vacío.
+        * **peso** es mayor a cero.
+*/
+    field nombre // String
+    field especie // Especie
+    field peso // Número
+
+}
+
+
+function refugio_SinAnimalLlamado_(unRefugio, unNombreAnimal){
+     /*
+        Proposito: Describe un refugio a partir de *refugio sin el animal llamada *nombreAnimal
+        Precondicion: El animal con nombre *nombreAnimal debe estar en el refugio
+        Parametros:
+            *refugio: Refugio - Es el refugio sobre el cual se parte para describir uno nuevo sin el animal *nombreAnimal
+            *nombreAnimal: String - Es el nombre del animal que se removerá del refugio
+        Tipo: Refugio
+    */    
+    
+    return(refugioCon_Y_(animalesDelRefugio_SinElAnimal_(refugio,nombreAnimal),
+                         cuidadoresDelRefugio_SinCuidarDelAnimalConNombre_(refugio,nombreAnimal)
+                         )
+        
+        )
+}
+
+
+function refugioCon_Y_(animales,cuidadores){
+    return(Refugio(
+                    animales<-animales,
+                    cuidadores<-cuidadores)
+          )
+}
+
+function animalesDelRefugio_SinElAnimal_(unRefugio, nombreAnimal){
+    
+     animalesResultantes := []
+    foreach animal in animales(refugio){
+            animalesResultantes := animalesResultantes ++ singularSi_(animal, nombre(animal) /= nombreAnimal)       
+    }
+    return(animalesResultantes)
+    
+}
+
+function cuidadoresDelRefugio_SinCuidarDelAnimalConNombre_(refugio,nombreAnimal){
+      /*
+        Proposito: Describe los cuidadores del *refugio sin el animal con nombre *nombreAnimal asignado a los cuidadores
+        Precondicion: Ninguna
+        Parametros:
+            *refugio: Refugio - 
+            *nombreAnimal: String 
+        Tipo: [Cuidador]
+    */
+    
+    cuidadoresConAnimalesACargoActualizados := []
+    foreach cuidador in cuidadoresDelRefugio_QueEstanACargoDe_(refugio, nombreAnimal){
+            cuidadoresConAnimalesACargoActualizados := cuidadoresConAnimalesACargoActualizados ++ [cuidador_sinEstarACargoDe_(cuidador,nombreAnimal)]
+        
+    }
+    return(cuidadoresConAnimalesACargoActualizados)
+
+
+}
+function cuidadoresDelRefugio_QueEstanACargoDe_(refugio,nAnimal){
+    
+    cuidadoresACargoVistos :=[]
+    foreach cuidador in cuidadores(refugio){
+        cuidadoresACargoVistos :=cuidadoresACargoVistos ++ singularSi_(cuidador,contiene_A_(nombresACargo(cuidador), nAnimal ) )
+    }
+    return(cuidadoresACargoVistos)
+}
+
+function cuidador_sinEstarACargoDe_(cuidador,nombreAnimal){
+    /*
+        Proposito: Describe al *cuidador sin el animal a cargo *nombreAnimal
+        Precondicion: El *cuidador debe estar a cargo del animal *nombreAnimal
+        Parametros:
+            *cuidador: Cuidador - El cuidador sobre el cual se le quitara el animal con nombre *nombreAnimal del cual está a cargo
+            *nombreAnimal: String - Es el nombre del animal que será removido de la lista de animales a cargo del *cuidador
+        Tipo: Cuidador
+    */
+    return(Cuidador( cuidador | nombre <- cuidador,
+                                nombresACargo <- nombresDeAnimales_Sin_(nombresACargo(cuidador),nombreAnimal)
+                    )
+          )
+}
+
+function nombresDeAnimales_Sin_(nombresAnimales,nombreAnimalASerRemovido){
+    
+    /*
+        Proposito: Describe una lista de animales a partir de *nombresAnimales sin *nombreAnimal
+        Precondicion: Ninguna
+        Parametros:
+            *nombresAnimales: [String] - Los nombres de los animales
+            *nombreAnimal: String - El nombre del animal a ser removido de la lista
+        Tipo: [String]
+    */
+    
+    nombresAnimalesActualizados := []
+    foreach nombreAnimal in nombresAnimales{
+        nombreAnimalesActualizados := nombresAnimalesActualizados ++ singularSi_(nombreAnimal,nombresAnimal /= nombreAnimalASerRemovido)
+    }
+    return(nombresAnimalesActualizados)
+}
+-----------------------------------------------------------------
+
+
+
+
+
+
+
+
+

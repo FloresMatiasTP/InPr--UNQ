@@ -1,0 +1,474 @@
+
+
+function esSingular_(unaLista){
+    /*
+        Proposito: Indica si la lista *unaLista* contiene un solo elemento
+        Prec:ninguna
+        Parametro:**unaLista**: Lista de [unaLista]
+        Tipo: Lista de[unaLista]
+    */
+    return( esVacía(resto(unaLista)) )
+    
+} 
+------------------------------EJERICIO 7----------------------
+
+function listaCon_Repetido_Veces(elemento, numero){
+    /*
+        Proposito: Describe una con el elemento *elemento* repetido *numero* veces
+        Prec:ninguno
+        Parametro:**elemento**: elemento de cualquier tipo
+                    *numero*: Numero
+        Tipo: Lista de [elemento]
+    */
+    listaAInsertar := []
+    repeat(numero){
+        listaAInsertar := listaAInsertar ++ [elemento]
+    }
+    return(listaAInsertar)
+}
+
+------------------------------EJERICIO 8----------------------  
+function listaDesde_Hasta_(unElemento, otroElemento){
+    /*
+        Proposito: Describe una lista desde el elemento **unElemento** hsta el eleento ** otroElemento**
+        Prec:El elemento **unElemento** debe ser mas chico que **otroElemento** y deben ser del mismo tipo
+        Parametro:
+                      **unElemento, otroElemento**: Elemento basico
+                    
+        Tipo: Lista de [elemento]
+        Observacion: 
+                        Es un recorrido de transformacion
+                        sobre una lista
+                        
+    */
+    listaAInsertar := []
+    foreach elemento in [unElemento .. otroElemento]{
+        listaAInsertar := listaAInsertar ++ [elemento]    
+    }
+    return( listaAInsertar  )
+}
+
+------------------------------EJERICIO 9----------------------
+function singular_Si_(elemento, condición) {
+     /* PROPÓSITO: Describir una lista según el valor de la condición dada. 
+                  Si es verdadera, describe la lista singularcon **elemento**. Si no, describe la lista vacía.
+        PRECONDICIONES: Ninguna.
+        PARÁMETROS:
+            * elemento: De un tipo cualquiera.
+            * condición: Booleano.
+        TIPO: Lista del tipo de **elemento**.
+    */
+    return (choose [elemento] when (condición)
+                [] otherwise)
+}
+
+
+------------------------------EJERICIO 10----------------------
+function longitudDe_(unaLista){
+     /*
+        Prop: Describe la cantidad de elementos de la lista *unaLista*
+        Prec:ninguna
+        Tipo:LIsta de Numeros
+        Parametro:*unaLista*: Lista de numeros
+                  
+        Obs: Es un recorrido de acumulacion 
+             sobre los elementos de la lista *unaLista*
+             contando la cantidad de elmentos de la lista dada
+    */
+    
+    longitudDeLaListaAlMomento := 0
+    foreach elemento in unaLista{
+        longitudDeLaListaAlMomento:= longitudDeLaListaAlMomento + 1
+        
+    }
+    return(longitudDeLaListaAlMomento)
+}
+------------------------------EJERICIO 11----------------------
+function sumatoriaDe_(unaLista){
+     /*
+        Prop: Describe la sumatoria de todos lo elemento de la lista *unaLista*
+        Prec:Los elementos de la  lista *unaLista* deben ser numeros
+        Tipo:LIsta de Numeros
+        Parametro:*unaLista*: Lista de numeros
+                  
+        Obs: Es un recorrido de transformacion 
+             sobre los elementos de la lista *unaLista*
+             en donde se suman todos los valores de la lista
+    */
+    listaRestante := unaLista
+    sumatoriaDeLalistaAlMomento := 0
+    foreach numero in unaLista{
+        sumatoriaDeLalistaAlMomento:= sumatoriaDeLalistaAlMomento + numero
+        
+    }
+    return(sumatoriaDeLalistaAlMomento)
+
+    
+}
+
+------------------------------EJERICIO 12----------------------
+function productoriaDe_(unaLista){
+    /*
+        Prop: Describe el producto de todos lo elemento de la lista *unaLista*
+        Prec:Los elementos de la  lista *unaLista* deben ser numeros
+        Tipo:LIsta de Numeros
+        Parametro:*unaLista*: Lista de numeros
+                  
+        Obs: Es un recorrido de transformacion 
+             sobre los elementos de la lista *unaLista*
+             en donde se multiplica todos los valores de la lista
+    */
+   
+    productoDeLalista :=1
+    foreach  numero in unaLista {
+        productoDeLalista:= productoDeLalista * numero
+        
+    }
+    return(productoDeLalista)
+}
+------------------------------EJERICIO 15----------------------
+function opuestasDe_(unaLista){
+     /*
+        Prop: Describe una lista en donde cada elemento es opuesta a cada elemento de la lista *unaLista*
+        Prec:Los elementos de la lista *unaLista* deben ser direcciones
+        Tipo:Lista de
+        Parametro:*unaLista*: Lista de tipo [unaLista]
+        Observacion: 
+                    Es n recorrido de transformacion
+                    sobre la lista dad
+                    tranformando cada elemento en su opuesto
+    */
+    
+    listaDeOpuestos := []
+    foreach elemento in unaLista{
+        listaDeOpuestos :=  listaDeOpuestos ++ [opuesto(elemento)]  
+        
+    }
+    return(listaDeOpuestos)
+}
+------------------------------EJERICIO 16----------------------
+function siguientesDe_(unaLista){
+    /*
+        Prop: Describe una lista lista en dodne cada elemento es el siguiente de los elemntos de la lista *unaLista*
+        Prec:La lista *unaLista* debe ser del tipo enumerativo(color,direccion,booleano)
+        Tipo:lista de tipo [unaLista]
+        Parametro: *unaLista*: Lista enumerativos
+        Observacion:
+                    Es un recorrido de trsnformacion
+                    sobre la lista dada
+                    tranformando cada elemento en su siguiente
+         */
+    listaDeSiguientes := []
+    foreach elemento in unaLista{
+        listaDeSiguientes :=  listaDeSiguientes ++ [siguiente(elemento)]  
+    }
+    return(listaDeSiguientes) 
+}    
+------------------------------EJERICIO 18----------------------
+
+function reversoDe_(unaLista){
+     /*
+        Prop: Describe el reverso de la lista *unalista* 
+        Prec:Ninguna
+        Tipo:LIsta de [unaLista]
+        Parametro: *unaLista*: Lista de [unaLista]
+         Observacion:
+                    Es un recorrido de trsnformacion
+                    sobre la lista dada
+                    en donde cada elemnto se le agrega a la principio de la lista
+    */    
+    listaDeReversos := []
+    foreach elemento in unaLista{
+        listaDeReversos :=  [elemento]  ++ listaDeReversos
+    }
+    return(listaDeReversos) 
+    
+}
+------------------------------EJERICIO 21----------------------
+function elementoDe_SinAparicionesDe_(unaLista,unElemento){
+    /*
+        Prop:Describe una lista sin el elemento *unElemento*
+        Prec:La lista *unaLista* no debe ser vacia
+        Tipo: Lista de [Elemento]
+        Parametro: *unaLista*: Lista de [Elemento]
+                   *unElemento*: Elemento
+        Obs: Es un recorrido de filtro
+            sobre la lista *unalista*
+            filtrando los elementos que no sean igual a *unElemento*
+    */
+    
+    listaFiltradaAlMomento := []
+   foreach elemento in unaLista {
+        listaFiltradaAlMomento := listaFiltradaAlMomento ++ singular_Si_(elemento, elemento /= unElemento)
+    }
+    return(listaFiltradaAlMomento)
+}
+------------------------------EJERICIO 23----------------------
+function contiene_A_(unaLista, unElemento) { 
+/* 
+    Prop:Indica si en la lista *unaLista* esta el elemento *unElemento* 
+    Prec:nignuna Tipo:Lsta de [Elemento] 
+    Parametro: 
+        **unaLista**: Lista del cualquier tipo 
+        **unElemento**: mismo tipo de la lista 
+    Observacion: 
+                Es un recorrido d busqueda
+                sobre lso elelmento de la lista
+                buscando si el elemento *unElemento* se encuentra en la lista 
+*/ 
+    listaRestante := unaLista 
+    while( not esVacía(listaRestante) && primero( listaRestante) /= unElemento ){
+        listaRestante := resto(listaRestante) 
+    }
+    return( not esVacía(listaRestante)) 
+    
+}
+------------------------------EJERICIO 24----------------------
+function indiceEn_De_(unaLista,unElemento){
+    /*
+        Prop:Describe la primera ubicación de la lista en la que se encuentra dicho elemento
+        Prec:La lista mo debe ser vacia
+        Tipo:Numero
+        Parametro: 
+                **unaLista**: Lista del cualquier tipo 
+                **unElemento**: mismo tipo de la lista 
+        Observacion: 
+                Es un recorrido d busqueda
+                sobre lso elelmento de la lista
+                buscando  el indice del elemento dado en la lista dada         
+    */
+      listaRestante := unaLista
+      posicionDelElementoAlMomento := 1
+    while(not esVacía(listaRestante) && not (primero(listaRestante) == unElemento) ){
+        posicionDelElementoAlMomento := posicionDelElementoAlMomento + 1
+        listaRestante := resto(listaRestante)
+    }
+    return(posicionDelElementoAlMomento)
+    
+}
+function minimoElementoEn_(unaLista){
+    /*
+    Proposito:Describe el elemnto mas chico de la lista
+    Precondicion:Debe haber al menos un elemento mas chico que otro
+    Parametro:
+                **unaLista**: Lista de numero
+                
+    Tipo:Numero
+    Observacion:
+                Es un recorrido de maximos-  minimos
+                sobre la lista dada
+                buscando  el numero mas chico de la lista
+    */ 
+    elementoMinimoAlMomento := primero(unaLista)
+   foreach numero in unaLista{
+        elementoMinimoAlMomento := minimoEntre_Y_( elementoMinimoAlMomento  ,numero )
+    }
+    return(elementoMinimoAlMomento)
+}
+function minimoEntre_Y_(primerNumero, segundoNumero){
+    /*
+        Proposito: Describe el numero mas chico entre *primerNumero* y el *segundoNumero* 
+        Precondicio *primerNumero* y *segundoNumero* deber ser del mismo tipo
+        Tipo:Numero || color || direccion : dependidiendo del tipo de valor que se ingrese como valor
+        Parametros: *primerNumero*, *segundoNumero*: Numero,color,direccion : Son los valores a comparar
+    */
+    return (choose primerNumero when (primerNumero < segundoNumero)
+                   segundoNumero otherwise     
+            )
+}
+-------------------------------EJERCICIO 28---------------------------------
+function maximoElementoEn_(unaLista){
+    /*
+    Proposito:Describe el elemnto mas grande de la lista
+    Precondicion:Debe haber al menos un elemento mas chico que otro
+    Parametro:
+                **unaLista**: Lista de numero
+                
+    Tipo:Numero
+    Observacion:
+                Es un recorrido de maximos-  minimos
+                sobre la lista dada
+                buscando  el numero mas grande de la lista
+    */ 
+    elementoMaximoAlMomento := primero(unaLista)
+    foreach numero in unaLista {
+        elementoMaximoAlMomento := maximoEntre_Y_( elementoMaximoAlMomento  ,numero )
+     
+    }
+    return(elementoMaximoAlMomento)
+}
+//////Ejercicio 13
+function maximoEntre_Y_(primerNumero, segundoNumero){
+    /*
+        Proposito: Describe el numero mas grande entre el  *primerNumero* y el *segundoNumero* 
+        Precondicio: *primerNumero* y *segundoNumero* deber ser del mismo tipo
+        Tipo:Numero || color || direccion - dependidiendo del tipo de valor que se ingrese por parametros
+        Parametros: *primerNumero*, *segundoNumero*: Numero,color,direccion : Son los valores a comparar
+    */
+    return (choose primerNumero when (primerNumero > segundoNumero)
+                   segundoNumero otherwise     
+           )
+}
+------------------------------EJERICIO 30----------------------
+function elementosEn_Hasta_(unaLista, indice){
+      /*
+        Prop:Describe la lista de elementos que estan antes del indice
+        Prec:La lista de ebe tener al menos **indice**  elementos
+        Tipo:LIsta de [Elemento]
+        Parametro:
+        Obs: Es un recorrido de filtro
+             sobre los elelmtnos de a lista 
+             filtrando solo los elementos que estan antes del indice 
+    */
+    listaRestante := unaLista
+    listaAlMomento := []
+    posicionAlMomento := 1
+    while( not esVacía(listaRestante) &&  posicionAlMomento /= indice){
+        listaAlMomento := listaAlMomento  ++ [primero(listaRestante)]
+        listaRestante := resto(listaRestante)
+        posicionAlMomento := posicionAlMomento + 1
+        
+    }
+    return(listaAlMomento)
+}
+------------------------------EJERICIO 31----------------------
+function elementosEn_Desde_(unaLista, unIndice){
+    /*
+        Prop:Describe la lista de todos los elementos en la original que están después de dicho índice
+        Prec: nignuna
+        Tipo:LIsta de [Elemento]
+        Parametro:
+         Obs: Es un recorrido de filtro
+             sobre los elelmtnos de a lista 
+             filtrando solo los elementos que estan a partir del indice 
+    */
+    indiceAlMomento:= 0
+    listaRestante:= unaLista
+    while( not esVacía(listaRestante) && not indiceAlMomento == unIndice){
+        indiceAlMomento := indiceAlMomento + 1
+        listaRestante := resto(listaRestante)
+        
+    }
+    return(listaRestante)
+}
+------------------------------EJERICIO 32----------------------
+function elementosEn_SinPrimeraApariciónDe_(unaLista,unElemento){
+     /*
+        Prop:Describe la lista *unaLIsta* sin el elemento *unElemento* si esta en la lista
+        Prec:nignuna
+        Tipo:Lista de [Elemento]
+        Parametro:
+        Obs: Es un recorrido de filtro 
+             sobre la lista *unaLIsta*
+             filtrando los elementos que sean distintos a *unElemento* 
+    */   
+    listaAlMomento := []
+    foreach elementoActual in unaLista{
+        listaAlMomento := listaAlMomento ++   singular_Si_(elementoActual, elementoActual /= unElemento)  
+    }
+    return (listaAlMomento)
+}
+------------------------------EJERICIO 33----------------------
+function sinDuplicados_(unaLista){
+      /*
+        Prop:Describe la lista *unaLista* sin elementos duplicacdos
+        Prec:ninguna
+        Tipo:Lista de [Elemento]
+        Parametro:
+        Obs: Es un recorrido de filtro
+            sobre los elementos de la lista unaLista
+            filtrando los elemento que no sean duplicados
+    */
+     listaFiltradaAlMomento := []
+    foreach elementoActual in unaLista{
+        listaFiltradaAlMomento := listaFiltradaAlMomento ++   singular_Si_(elementoActual, not contiene_A_(listaFiltradaAlMomento, elementoActual))  
+    }
+    return (listaFiltradaAlMomento)
+}
+
+------------------------------EJERICIO 35----------------------
+
+function estáOrdenada_(unaLista){
+    /*
+        Prop:Indica si la lista dada esta ordenada de menor a mayor
+        Prec:ninguna
+        Tipo:Booleano
+        Parametro: *unaLista*: Lista de Numero
+        Obsservaciom: Es un recorrido de busqueda
+            sobre los elementos de los lista
+            buscando el elemento que esta desordenado con el sig elemento de la lista
+    */
+    listaARecorrer := unaLista
+    while(  not esVacía(listaARecorrer) && not esSingular_(listaARecorrer) && 
+          primero(listaARecorrer) <= segundoDe_(listaARecorrer)  ) {
+        listaARecorrer := resto(listaARecorrer)
+    }
+    return( esSingular_(listaARecorrer))
+    
+}
+function segundoDe_(unaLista){
+    /*
+        Proposito:Describe  el segundo elemento de la lista **unaLista**
+        Prec:ninguna
+        Parametro:unaLista: 
+        Tipo:Lista
+    */
+    return(primero(resto(unaLista)) )
+    
+}
+
+------------------------------EJERICIO 36----------------------
+function laLista_Ordenada(listaDeNúmeros) {
+ /*
+    PROPÓSITO: describe la lista dada con los elementos ordenados.
+
+    PARÁMETROS:
+        * listaDeNúmeros: Lista de nnumero
+    RESULTADO: Lista de numero
+    PRECONDICIONES:
+    * Ninguna. 
+ */
+
+    elementosOrdenados := [minimoElementoEn_(listaDeNúmeros)]
+    elementosPorOrdenar := sinElMínimoElemento_(listaDeNúmeros)
+    while (not esVacía(elementosPorOrdenar)) {
+        elementosOrdenados := elementosOrdenados ++  [minimoElementoEn_(elementosPorOrdenar)]
+        elementosPorOrdenar := sinElMínimoElemento_(elementosPorOrdenar)
+ }
+ return (elementosOrdenados)
+}
+function sinElMínimoElemento_(listaDeNumeros) {
+    /*
+        PROPÓSITO:dada una lista de numeros describe la lista que se
+        obtiene de eliminar una unica vez el elemento mas chico
+        PARÁMETROS:
+            * listaDeNumeros:  Lista de Numero
+            
+        TIPO: Lista de numeros
+        PRECONDICIONES:
+            * Ninguna
+    */
+    listaSinElMinimoHastaAhora:=[]
+    foreach numero in listaDeNumeros {
+        listaSinElMinimoHastaAhora:=listaSinElMinimoHastaAhora ++ 
+                                    singular_Si_(numero, minimoElementoEn_(listaDeNumeros) /=numero )
+    }
+    return (listaSinElMinimoHastaAhora)
+}
+------------------------------EJERICIO 38----------------------
+
+
+
+program{
+    return(    estáOrdenada_([1, 37, 9, 15]) )
+}
+
+
+
+
+
+
+
+
+
+

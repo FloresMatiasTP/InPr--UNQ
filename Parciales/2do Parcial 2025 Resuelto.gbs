@@ -1,0 +1,378 @@
+type Cadena is record {
+/*
+    PROPOSITO: Modela una empresa de cadena de venta de empanadas.
+    INV. REP.
+        *nombre* no es un string vac[o.
+        * **local** no contiene dos elementos que tengan el mismo número de *idLocal*
+        * **franquiciados** no contiene dos elementos con el mismo número de *dni*
+        * Ceda franquiciado en **franquiciados**  contiene en la lista de *idLocales* solo
+            nameros que se corresponden a un * idLcoal* presente en uno de los locales de la
+            lista de lcoales
+        * Cada local en la lista de *locales* tiene su id en en la lista *idLocales* de un y solo un franquiciado de la lista **franquiciados**
+*/
+    field nombre // String
+    field locales // Lista de Local
+    field franquiciados // Lista de Franquiciado
+}
+
+function cadena1(){
+    return(  Cadena( nombre  <- "Cadena1",
+                     locales <- [local1(), local2(), local3()],
+                     franquiciados <- [franquiciado1(),franquiciado2(),franquiciado3()]
+         ) 
+    )
+}
+type Local is record {
+/*
+    PROPOSITO: Modela un local de la cadena de venta de empanadas.
+    INV. REP.
+        * es mayor a cero.
+        * es mayor a cero.
+*/
+    field idLocal // Número
+    field localidad // Local idad
+    field pedidos // Lista de Pedido
+    field precioPorUnidad // Número
+    field gustos // Lista de GustoEmpanada
+}
+function local1(){
+    return( Local( idLocal <- 1,
+                   localidad <- Quilmes,
+                   pedidos <- [pedido1(), pedido2()],
+                   precioPorUnidad <- 10,
+                   gustos <- [CarneSuave,Humita]  
+                 ) 
+         )
+}
+function local2(){
+    return( Local( idLocal <- 2,
+                   localidad <- Quilmes,
+                   pedidos <- [ pedido2()],
+                   precioPorUnidad <- 20,
+                   gustos <- [CarnePicante,Humita,Verdura]  
+                 ) 
+         )
+}
+function local3(){
+    return( Local( idLocal <- 3,
+                   localidad <- Quilmes,
+                   pedidos <- [pedido1(), pedido2()],
+                   precioPorUnidad <- 30,
+                   gustos <- [CarneSuave,Humita,Verdura]  
+                 ) 
+         )
+}
+
+type Franquiciado is record {
+/*
+    PROPÓSITO: Modela una persona dueño de  uno de los locales (franquiciado).
+    INV. REP..
+        * es un número de DNI Vál ido.
+*/
+    field dni //String
+    field nombre // String
+    field idLocales // Lista De Local
+}
+function franquiciado1(){
+    return(Franquiciado( dni <- "11",
+                         nombre <- "FR1",
+                         idLocales <- [local1() ] )
+    ) 
+}
+function franquiciado2(){
+    return(Franquiciado( dni <- "2222",
+                         nombre <- "FR2",
+                         idLocales <- [local2() ] )
+    ) 
+}
+function franquiciado3(){
+    return(Franquiciado( dni <- "3333",
+                         nombre <- "FR3",
+                         idLocales <- [local3() ] )
+    ) 
+}
+
+
+
+type Pedido is record {
+/*
+    PROPÓSITO: Modela un pedido de empanadas.
+    INV. REP.
+        * es mayor a 0.
+        * no es una lista vacía.
+*/
+    field importe  // Número
+    field gustos   // Lista de GustoEmpanada
+}
+function pedido1(){
+    return( Pedido(  importe <- 1000,
+                     gustos <- [Humita, CarneSuave] ) 
+    )
+}
+function pedido2(){
+    return( Pedido(  importe <- 2000,
+                     gustos <- [Humita, CarneSuave,Verdura] ) 
+    )
+}
+type Localidad is variant{
+/*
+    PROPÓSITO: Modelar lasl localidades de los locales
+   
+*/    
+    case Caba {}
+    case Quilmes {}
+    case Berazategui {}
+    case Varela {}
+    case Avellaneda{}
+}
+
+type GustoEmpanada is variant{
+    
+    
+    case Humita{}
+    case CarneSuave{}
+    case CarnePicante{}
+    case Verdura{}
+    case JamonYQueso{}
+}
+-------------------------------------------------------------------
+--      1
+/*Ejercicio 1)
+Un franquiciado piuede decidir vender su franquicia a una persona  externa a la cadena. Cuando esto ocurre, en la cadena se debe dar de baja al
+franquiciado,y crear uno nuevo franquiciado para el comprador. Ademas todos los locales de la franquicia vendida debe ser registrados
+como propiedad de nuevo franquiciado. Para modelar este suceso se pide implementar cadena_TrasVentaDeFraquiciado_ConDni_ADniConNombre_, 
+que dados una cadena, un dni de un franquiciado existiente en la cadena  que vendio sus locales y  el dni y un nombre de una persona que 
+ no es un franquiciado previo en la cadena,
+ Decribe la cadena luego de haber realizado el proceso de venta de la franquicia del franquiciado dado a la nueva persona con los datos dados
+*/
+
+function cadena_TrasVentaDeFraquiciado_ConDni_ADniConNombre_(cadenaDeVentas  , dniFranquiciado,  dniComprador, nombreComprador ){
+    /*
+        Proposito: Decribe la cadena tras la venta de la 
+                    franquicia del dni del franquiciado dado a la nueva persona compradora con los datos dados
+        Precondicion:
+                -*dniFranquiciado* debe ser el dni de un franquiciado existenete en la cadena dada
+                - *dniComprador* y *nombreComprador* debe ser el dni y nombre una persona que no es franquiciado en la cadena dada
+        Parametros:
+                - cadenaDeVentas:  Cadena
+                - dniFranquiciado: String
+                - dniComprador:    String
+                - nombreComprador: String
+        Tipo: Cadena
+    */
+    return(  Cadena(cadenaDeVentas |franquiciados <- franquiciadosDe_TrasVentaDeLFranquiciadoConDni_AlCompradorConDni_Con_Nombre_(cadenaDeVentas,dniFranquiciado,
+                                                                                                           dniComprador, nombreComprador)
+            ) 
+          )
+}
+function franquiciadosDe_TrasVentaDeLFranquiciadoConDni_AlCompradorConDni_Con_Nombre_(cadena,dniFranquiciado,dniComprador, nombreComprador){
+    /*
+        Proposito: Decribe los franquiciados de la cadena dada tras la venta de la 
+                    franquicia del dni del franquiciado dado a la nueva persona compradora con los datos dados
+        Precondicion:
+                -*dniFranquiciado* debe ser el dni de un franquiciado existenete en la lista de fr dada
+                - *dniComprador* y *nombreComprador* debe ser el dni y nombre una persona que no es franquiciado en la cadena dada
+        Parametros:
+                - cadena:          Cadena
+                - dniFranquiciado: String
+                - dniComprador:    String
+                - nombreComprador: String
+        Tipo: Lista de franquiciado
+    */
+    return( franquiciadosDe_SinFranquiciadoConDni_(cadena, dniFranquiciado)  ++ [nuevoFranquiciadoConDni_Nombre_YLocales_(dniComprador,
+                                                                            nombreComprador, localesDelFranquiciadoConDni_En_(dniFranquiciado,cadena) ) ]
+         )
+}
+function franquiciadosDe_SinFranquiciadoConDni_(cadena, dniFranquiciado)  {
+    /*
+        Proposito: Decribe los franquiciados de la cadena dada  sin el franquiciado con el dni **dniFranquiciado**
+        Precondicion:
+                -*dniFranquiciado* debe ser el dni de un franquiciado existenete en la lista de cadena dada
+        Parametros:
+                - cadena:          Cadena
+                - dniFranquiciado: String
+        Tipo: Lista de franquiciado
+    */    
+    return( franquiciadosAntesDelFranquiciadoConDni_De_(dniFranquiciado, cadena) ++ 
+             resto( franquiciadosDesdeElFranquiciadoConDni_De(dniFranquiciado, cadena) ) 
+            )
+}
+function franquiciadosAntesDelFranquiciadoConDni_De_(dniFranquiciado, cadena){
+   /*
+        Proposito: Decribe la lista con franquiciados de la cadena dada  antes deel franquiciado con el dni **dniFranquiciado**
+        Precondicion:
+                -*dniFranquiciado* debe ser el dni de un franquiciado existenete en la lista de cadena dada
+        Parametros:
+                - cadena:          Cadena
+                - dniFranquiciado: String
+        Tipo: Lista de franquiciado
+        Observacion: 
+                        Es un reocrrido de busqueda con acumulacion
+                        sobre los franciados de la cadena dada
+                        acumulando cadad franquiciado que  se encuentran antes del  franquiciado con el dni dado
+    */ 
+    franquiciadosRestante := franquiciados(cadena)
+    franquiciadosVistos := []
+    while( not esFranquiciado_FranquiciadoConDni_(primero( franquiciadosRestante ), dniFranquiciado )   ) {
+        franquiciadosVistos := franquiciadosVistos ++ [primero( franquiciadosRestante )]
+        franquiciadosRestante := resto(franquiciadosRestante)
+    }
+    return(franquiciadosVistos)
+}
+function esFranquiciado_FranquiciadoConDni_(franquiciado, dniFranquiciado){
+   /*
+        Proposito: Indica si el franquiciado dado es el franquiciado con el dni dado
+        Precondicion:Ninguno
+        Parametros:
+                - dniFranquiciado: String
+        Tipo: Booleano
+    */    
+    return( dni(franquiciado) == dniFranquiciado)
+}
+
+function franquiciadosDesdeElFranquiciadoConDni_De(dniFranquiciado, cadena){
+     /*
+        Proposito: Decribe la lista con franquiciados de la cadena dada  desde el franquiciado con el dni **dniFranquiciado**
+        Precondicion:
+                -*dniFranquiciado* debe ser el dni de un franquiciado existente en la lista de cadena dada
+        Parametros:
+                - cadena:          Cadena
+                - dniFranquiciado: String
+        Tipo: Lista de franquiciado
+        Observacion: 
+                        Es un reocrrido de busqueda 
+                        sobre los franciados de la cadena dada
+                        buscando el   franquiciado con el dni dado
+    */ 
+    franquiciadosRestante := franquiciados(cadena)
+    while (not esFranquiciado_FranquiciadoConDni_(primero( franquiciadosRestante ), dniFranquiciado ) ) {
+        franquiciadosRestante := resto(franquiciadosRestante)
+    }
+    return (franquiciadosRestante)
+}
+
+function nuevoFranquiciadoConDni_Nombre_YLocales_(dniComprador, nombreComprador, locales){
+    /*
+        Proposito:Describe a un franquiciado con el dni, nombre y locales dados
+        Parametro:
+                -dniComprador: String
+                -nombreComprador: String
+                -locales: Lista de Local
+        Precondicion:ninguno
+        Tipo:Franquiciado
+    */
+    return(  Franquiciado( dni<- dniComprador,
+                           nombre <-nombreComprador,
+                           idLocales <- locales
+                          )
+        )
+}
+function localesDelFranquiciadoConDni_En_(dniFranquiciado,cadena){
+    /*
+        Proposito:Describe a los locales del franquiciado con el dni dado en la cadena dada
+        Parametro:
+                -dniComprador: String
+                -cadena: Cadena
+        Precondicion:
+                -Debe existir un feancuiciado con el dni dado en la cadena dada
+        Tipo:Lista de local
+        Observacion: 
+                    Es un recorrido de busqueda
+                    sobre los franquiciados de la cadeda dada
+                    buscando  al franquiciado con el dni dado
+    */
+    franquiciadosRestante := franquiciados(cadena)
+    while( not esFranquiciado_FranquiciadoConDni_(primero( franquiciadosRestante ), dniFranquiciado ) ){
+        franquiciadosRestante := resto(franquiciadosRestante)
+    }
+    return( idLocales( primero( franquiciadosRestante ) ) )
+}
+
+-------------------------------------------------------------
+/*Ejercicio 2)
+ -Implemente la funcion franquiciadosConLocaLiderDeFacturacionPorLocalidadesDe_ que dada una cadena de ventas, describe la lista de los franquiciados
+  que son dueños de locales lideres de facturacion  de cada localidad en el orden en el que recorren las localidades. Es decir, el franquiciado que sea
+  dueño del local que mas ha facturado por cada una de las localidades.Para ello, se sabe que ne cada localidad hay un local con as facturacion que el
+   resto .
+  
+ - Para resolver este roblema puede hacer uso de la funcion  franquiciadoDueñoDeLocal_En_ , que se presenta como primitiva, que dado un local y una
+   cadena de ventas, describe el franquiciado que es dueño del local dado en la cadena dada.
+
+*/
+
+function franquiciadosConLocaLiderDeFacturacionPorLocalidadesDe_(cadenaVentas){
+     /*
+        Proposito:Describe la lista de los franquiciados que son dueños de locales lideres de facturacion 
+                     de cada localidad en el orden en el que recorren las localidades.
+        Parametro:
+                -cadenaVentas: Cadena
+        Precondicion:
+                -Debe existir un local con mayor facturacion que el resto en cada localidad
+        Tipo:Lista de franquiciado
+        Observacion: 
+                    Es un recorrido de busqueda
+                    sobre las localidades
+                    buscando  al local lider de facturacion de cada localidad 
+    */
+    franquiciadosLideresDeFacturacionAlMomento :=[]
+    localidadActual := minLocalidad()
+    while(localidadActual /= maxLocalidad() ){
+        franquiciadosLideresDeFacturacionAlMomento :=franquiciadosLideresDeFacturacionAlMomento ++ [franquiciadoDueñoDeLocal_En_(
+                    localDeMayorFacturacionDeLaLocalidad_En_(localidadActual,cadenaVentas ), cadenaVentas )  ] 
+        localidadActual :=siguienteLocalidad_(localidadActual)            
+    }
+    return(franquiciadosLideresDeFacturacionAlMomento )
+}
+
+function localDeMayorFacturacionDeLaLocalidad_En_(cadenaVentas,unaLocalidad){
+     /*
+        Proposito:Describe al local de mayor facturacion en la localidad dada.
+        Parametro:
+                -localidadActual: Localidad
+        Precondicion:
+                -Debe existir un local con mayor facturacion que el resto en la localidad dada
+        Tipo:Local
+        Observacion: 
+                    Es un recorrido de maximo-minimos
+                    sobre las localidades
+                    buscando  al local lider de facturacion de la localidad dada 
+    */    
+    localLiderDeFacturacionALMomento := primero(localesDeLocalidad_En(unaLocalidad,cadenaVentas))
+    foreach local in  resto(localesDeLocalidad_En_(unaLocalidad, cadenaVentas) ) {
+        localLiderDeFacturacionALMomento := localConMayorFacturacionEntre_Y_(local, localLiderDeFacturacionALMomento) 
+    }
+    return( localLiderDeFacturacionALMomento )
+}
+
+function localesDeLocalidad_En_(unaLocalidad, cadenaVentas){
+    
+    localesAlMomento :=[]
+    foreach local in locales(cadenaVentas){
+        localesAlMomento :=localesAlMomento ++ singular_Si_( local, esLocal_DeLaLocalidad_(local, unaLocalidad) )
+    }
+    return(localesAlMomento)
+}
+function esLocal_DeLaLocalidad_(local, unaLocalidad){
+    
+    return( localidad(local)== unaLocalidad)
+}
+
+function localConMayorFacturacionEntre_Y_(primerLocal, segundoLocal, cadena){
+    
+    return( choose primerLocal when( facturacionTotalDelLocal_(primerLocal) > facturacionTotalDelLocal_(segundoLocal) ) 
+                   segundoLocal otherwise
+    )
+}
+function  facturacionTotalDelLocal_(unLocal){
+    
+    facturacionTotalAlMomento := 0
+    foreach pedido in pedidos(unLocal){
+        facturacionTotalAlMomento := facturacionTotalAlMomento + importe(pedido)
+    }
+    return(facturacionTotalAlMomento)
+}
+
+-----------------------------------------------------------------------------
+program{
+    return( cadena_TrasVentaDeFraquiciado_ConDni_ADniConNombre_(cadena1()  , "11",  "4444", "FR4" ) )
+}

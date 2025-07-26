@@ -1,0 +1,328 @@
+
+
+
+
+
+
+function mínimoEntre_Y_(primerNum, segundoNum){
+    /*  Proposito: Describe el numero mas chico entre *primerNumero* y el *segundoNumero* 
+        Precondicion: *primerNumero* y *segundoNumero* deber ser del mismo tipo
+        Tipo:Numero || color || direccion : dependidiendo del tipo de valor que se ingrese como valor
+        Parametros: *primerNumero*, *segundoNumero*: Numero,color,direccion : Son los valores a comparar
+    */
+    return (choose primerNumero when (primerNumero < segundoNumero)
+                   segundoNumero otherwise     
+            )
+    
+}
+
+function máximoEntre_Y_(primerValor, segundoValor){
+    /*  Proposito: Describe el numero mas chico entre *primerValor* y el *segundoValor* 
+        Precondicion: *primerValor* y *segundoValor* deber ser del mismo tipo
+        Tipo:Numero || color || direccion : dependidiendo del tipo de valor que se ingrese como valor
+        Parametros: *primerValor*, *segundoValor*: Numero,color,direccion : Son los valores a comparar
+    */
+    return (choose primerValor when (primerValor < segundoValor)
+                   segundoValor otherwise     
+            )
+    
+}
+
+function nroBolitas_EnLaFilaActual(color){
+    /*
+        Proposito: Describe la cantidad de bolitas del color *color* que hay en la fila actual
+        Precondicion:El
+        Parametro:color:Color - es el color a contar su cantidad
+        Tipo:Numero
+        Obs: 
+                Es un recorrido de procesamiento
+                sobre las celdas de uan fila
+                contando las cantidad de bolitas del color *color* que hya en cada celda
+    */
+    cantidadDeBolitasYaVistas := cantidadBolitas_EnLaCeldaActual(color)
+    
+    while( puedeMover(Este )){
+         Mover(Este)
+        cantidadDeBolitasYaVistas := cantidadDeBolitasYaVistas + cantidadBolitas_EnLaCeldaActual(color)
+    }
+    return(cantidadDeBolitasYaVistas )
+}
+
+
+
+function cantidadBolitas_EnLaCeldaActual(colorAContar){
+ /*
+        Proposito:Describe la cantidad de bolitas del color *colorAContar* que hay en la celda actual
+        Precondicion:ninguno
+        Parametro:
+        Tipo:Numero
+    */   
+    return(nroBolitas(colorAContar))
+}
+
+function distanciaAlBorde_(direccion){
+    /*
+        Proposito:Describe la cantidad de celdas de distancia desde la celda actual hasta el borde *direccion*
+        Precondicion:nignuno
+        Parametro: direccion: Direccion - Es la direccion a contar las distancia
+        Tipo:Numero
+        Observacion: 
+                    Es un recorrido de procesamiento
+                    sobre las celdas de uan fila o columna
+                     
+    */
+    distanciaAlbordeAlMomento := 0
+    while (puedeMover(direccion)){
+        Mover(direccion)
+        distanciaAlbordeAlMomento :=distanciaAlbordeAlMomento +1    
+    }
+    return(distanciaAlbordeAlMomento)
+}
+
+function coordenadaX(){
+   /*
+        Proposito: Describe la coordenada de la columna actual
+        Precondicion:ninguna
+        Tipo:numero
+    */ 
+    return(distanciaAlBorde_(Oeste))
+}
+function coordenadaY(){
+   /*
+        Proposito: Describe la coordenada de la fila actual
+        Precondicion:ninguna
+        Tipo:numero
+    */ 
+    return(distanciaAlBorde_(Sur))
+}
+
+///EJERCICIO 20
+
+function nroFilas(){
+   /*
+        Proposito:Describe la cantidad de filas del tablero
+        Precondicion:ninguno
+        Tipo:Numero
+    */ 
+    IrAlBorde_(Norte)
+   return(  coordenadaY() +1 )
+}
+function nroColumnas(){
+   /*
+        Proposito:Describe la cantidad de columnas del tablero
+        Precondicion:ninguno
+        Tipo:Numero
+    */ 
+    IrAlBorde_(Este)
+   return(  coordenadaX() +1 )
+}
+
+
+    
+    
+///EJERCICIO 21    
+function nroVacias(){
+  /*
+        Proposito:Describe la cantidad de celdas vacias del tabero
+        Precondicion:ninguna
+        Tipo:Numero
+        Observacion: 
+                        Es un recorrido de acumulacion
+                        sobre las celdas del tablero
+                        contando todas las celdas vacias del tablero
+    */  
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este, Norte)
+    cantidadDeCeldasVaciasAlMomento := unoSi_CeroSiNo( esCeldaVacia())
+    while(haySiguienteCeldaEnUnRecorridoAl_Y_(Este, Norte)){
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este, Norte)
+        cantidadDeCeldasVaciasAlMomento := cantidadDeCeldasVaciasAlMomento + unoSi_CeroSiNo( esCeldaVacia())
+    }
+    return( cantidadDeCeldasVaciasAlMomento)
+}   
+
+---------------------------------
+function cantidadDeCeldasConBolitasDeColor_(color){
+     /*
+        Proposito:Describe la cantidad de celdas  que contienen al menos una bolita del color *color*
+        Precondicion:ninguna
+        Parametro: color: Color - Es el color a contar
+        Tipo:Numero
+        Observacion: 
+                        Es un recorrido de acumulacion
+                        sobre las celdas del tablero
+                        contando todas las celdas que contienen al menos una bolita del color *color* del tablero
+    */  
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este, Norte)
+    cantidadDeCeldasConBolitasVistas := unoSi_CeroSiNo(hayBolitas(color))
+    while(haySiguienteCeldaEnUnRecorridoAl_Y_(Este, Norte)){
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este, Norte)
+        cantidadDeCeldasConBolitasVistas := cantidadDeCeldasConBolitasVistas + unoSi_CeroSiNo(hayBolitas(color))
+    }
+    return(cantidadDeCeldasConBolitasVistas)
+}
+-----------------------------
+function nroBolitasTotalDeColor_(colorAContar){
+/*
+        Proposito:Describe la cantidad de bolitas que hay en todo el tablero
+        Precondicion:ninguna
+        Parametro: colorAContar: Color - Es el color a contar
+        Tipo:Numero
+        Observacion: 
+                        Es un recorrido de acumulacion
+                        sobre las celdas del tablero
+                        contando todas las bolitas del color *colorAContar* que hay en todo el tablero
+    */      
+    IrAPrimeraCeldaEnUnRecorridoAl_Y_(Este, Norte)
+    cantidadDeBolitasVistas := nroBolitas(colorAContar)
+    while(haySiguienteCeldaEnUnRecorridoAl_Y_(Este, Norte)){
+        IrASiguienteCeldaEnUnRecorridoAl_Y_(Este, Norte)
+        cantidadDeBolitasVistas := cantidadDeBolitasVistas +  nroBolitas(colorAContar)
+    }
+    return(cantidadDeBolitasVistas)
+}
+
+--------------------------
+   // eejercicio 26
+function unoSi_CeroSiNo(condicion){
+    /*
+        Proposito: Describe 1 si cumple la condicion *condicion* y sino cumple la condicion describe 0
+        Precondicion:ninguno
+        Parametros:*condicion* : Booleano
+        Tipo:Numero
+    */    
+    return ( choose 1 when(condicion)
+                    0 otherwise 
+            )
+}
+------------------------------------
+//EJERCICIO 30
+function direcciónHaciaLaCualHayBolitasDe_(colorABuscar){
+
+/*
+        Proposito:Describe la direccion hacia la cual hay bolitas del color *colorABuscar* desde la celda actual
+        Precondicion:Debe haber una celda vecina a la actual con una bolita del color *colorABuscar*
+        Parametro: 
+                    *colorABuscar*: Color - Es el color a buscar 
+        Tipo:Direccion
+    */    
+    return( choose Norte when (hayBolitas_EnCeldaAl_(colorABuscar,Norte))
+                   Este  when (hayBolitas_EnCeldaAl_(colorABuscar,Este))
+                   Sur   when (hayBolitas_EnCeldaAl_(colorABuscar,Sur))
+                   Oeste otherwise
+        )
+}
+function direcciónHaciaLaCualHayBolitasDe_2(colorABuscar){
+    /*
+        Observacion: 
+                        Es un recorrido enumerativo 
+                        sobre las direcciones
+                        buscando la direccion hacia la cual hay bolitas de color *colorABuscar*
+                        
+    */
+    dirActual:=minDir()
+    while(not hayBolitas_EnCeldaAl_(colorABuscar, dirActual)){
+        dirActual:= siguiente(dirActual)
+    }
+    return(dirActual)
+}
+----------------------------------
+function cantidadDeVecinasConBolitas(){
+    /*
+        Proposito: Describe la cantidad de celdas vecianas a la actual que contengan bolitas de cualquier color
+        Precondicion:Ninguna
+        Tipo:Numero
+    */
+    return( cantidadDeVecinasOrtogonalesConBolitas() +cantidadDeVecinasDiagonalesConBolitas() )
+    
+} 
+------------------------
+function cantidadDeVecinasOrtogonalesConBolitas(){
+    /*
+        Proposito: Describe la cantidad de celdas vecianas ortogonales a la actual que contengan bolitas de cualquier color
+        Precondicion:Ninguna
+        Tipo:Numero
+        Observacion: 
+                        Es un recorrido enumerativo
+                        sobre las direcciones del tablero
+                        acumulando la cantidad de celdas vecianas diagonales a la actual que contenga alguna bolita de cualquier color
+    */
+    cantidadDeCeldasVecinasConBolitas :=0
+    dirActual:= minDir()
+    while(not dirActual == maxDir() ) {
+        cantidadDeCeldasVecinasConBolitas :=cantidadDeCeldasVecinasConBolitas + unoSi_CeroSiNo( hayBolitasAl_(dirActual) )
+        dirActual := siguiente(dirActual)
+    }
+    return(cantidadDeCeldasVecinasConBolitas + unoSi_CeroSiNo( hayBolitasAl_(dirActual) ) )  
+}
+
+function hayBolitasAl_(direccion){
+    return(puedeMover(direccion) && hayBolitasEnCeldaAl_( direccion) )   
+}
+function hayBolitasEnCeldaAl_(direccion){
+    /*
+        Proposito: Indicar si en la celda lindante al *direccion* de la celda actual hay bolitas
+        Precondicion:Debe haber al menos una celda hacia el *direccion* de la celda actual
+        Tipo:Booleano
+        Parametros: *color* : color - Es el color de la bolita
+                    *direccion*: direccion- Es la direccion a donde se va a mover el cabezal
+    */
+    Mover(direccion)
+    return(hayBolitas(Rojo) || hayBolitas(Azul)||hayBolitas(Negro) ||hayBolitas(Verde))
+}
+-------------------------------------------
+function cantidadDeVecinasDiagonalesConBolitas(){
+    /*
+        Proposito: Describe la cantidad de celdas vecianas diagonales a la actual que contengan bolitas de cualquier color
+        Precondicion:Ninguna
+        Tipo:Numero
+        Observacion: 
+                        Es un recorrido enumerativo
+                        sobre las direcciones del tablero
+                        acumulando la cantidad de celdas vecianas diagonales a la actual que contenga alguna bolita de cualquier color
+    */
+    cantidadDeCeldasVecinasConBolitasYaVistas :=0
+    dirActual:= minDir()
+    while(not dirActual == maxDir()  ){
+        cantidadDeCeldasVecinasConBolitasYaVistas :=cantidadDeCeldasVecinasConBolitasYaVistas + unoSi_CeroSiNo( hayBolitasAl_YAl_(dirActual, siguiente(dirActual)) )
+        dirActual := siguiente(dirActual)
+    }
+    return(cantidadDeCeldasVecinasConBolitasYaVistas + unoSi_CeroSiNo( hayBolitasAl_YAl_(dirActual, siguiente(dirActual)) ))   
+}
+
+function hayBolitasAl_YAl_(dir1,dir2){
+ return( puedeMoverEndiagonlAl_YAl_(dir1,dir2) && hayBolitasEnCeldaAl_YAl_( dir1,dir2) )      
+}
+ function puedeMoverEndiagonlAl_YAl_(dirp,dirs){
+     return(puedeMover(dirp) && puedeMover(dirs) )
+ }
+ 
+
+function hayBolitasEnCeldaAl_YAl_( dir1,dir2){
+    /*
+        Proposito: Indicar si en la celda lindante al *direccion* de la celda actual hay bolitas
+        Precondicion:Debe haber al menos una celda hacia el *direccion* de la celda actual
+        Tipo:Booleano
+        Parametros: *color* : color - Es el color de la bolita
+                    *direccion*: direccion- Es la direccion a donde se va a mover el cabezal
+    */
+    Mover(dir1)
+    Mover(dir2 )
+    return(hayBolitas(Rojo) || hayBolitas(Azul)||hayBolitas(Negro) ||hayBolitas(Verde))
+}
+
+function esCeldaConBolitas(){
+    return(hayBolitas(Verde) || hayBolitas(Azul) ||hayBolitas(Rojo) ||hayBolitas(Negro) )
+}
+
+-------------------
+program{
+  return(cantidadDeVecinasConBolitas())
+}
+
+
+/*
+        Proposito:
+        Precondicion:
+        Parametro:
+        Tipo:
+    */

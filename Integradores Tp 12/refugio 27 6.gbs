@@ -1,0 +1,198 @@
+type Refugio is record { /*
+    PROPÓSITO: Modelar un refugio de animales.
+    INV. REP.:
+    * La lista **animales** no tiene animales con el mismo nombre.
+    * La lista **cuidadores** no tiene cuidadores con el mismo nombre.
+    * Todo animal de la lista **animales** tiene asignado uno o más
+    cuidadores de la lista **cuidadores**.
+    * Cada nombre de animal asignado a un cuidador de la lista
+    **cuidadores** corresponde al nombre de un animal de la lista
+    **animales**.
+    */
+    field animales // [Animal]
+    field cuidadores // [Cuidador]
+}
+
+function refugio1(){
+    return( Refugio(  animales <- [condor(), carpincho(), hornero() ],
+                      cuidadores <- [cuidador1(),cuidador2(),cuidador3()  ] 
+                       )
+    )
+}
+
+type Especie is variant { /*
+    PROPÓSITO: Modelar
+    las especies de
+    animales del
+    refugio.
+    */
+    case Yaguareté {}
+    case Vicuña {}
+    case Yarará {}
+    case Hornero {}
+    case Condor {}
+    case Carpincho {}
+}
+
+type Cuidador is record { /*
+    PROPÓSITO: Modelar un cuidador de animales.
+    INV.REP.:
+    * **nombre** no es un string vacío.
+    * La lista **nombresACargo** no tiene
+    repetidos.
+    */
+    field nombre // String
+    field nombresACargo // [String]
+}
+function cuidador1(){
+    return(Cuidador(  nombre <- "cuidador1",
+                      nombresACargo <- [ hornero(), carpincho() ]
+                        ))
+}
+function cuidador2(){
+    return(Cuidador(  nombre <- "Cuidador2",
+                      nombresACargo <- [ condor(), carpincho() ]
+                        ))
+}
+
+function cuidador3(){
+    return(Cuidador(  nombre <- "Cuidador3",
+                      nombresACargo <- [  carpincho() ]
+                        ))
+}
+
+
+
+type Animal is record { /*
+    PROPÓSITO: Modelar un animal.
+    INV. REP.:
+    * **nombre** no es un string vacío.
+    * **peso** es mayor a cero.
+    */
+    field nombre // String
+    field especie // Especie
+    field peso // Número
+}
+function condor(){
+    return( Animal( nombre <- "condor" ,
+                    especie <- Condor,
+                    peso <- 800
+          ) 
+    )
+}
+function hornero(){
+    return( Animal( nombre <- "hornero" ,
+                    especie <-Hornero,
+                    peso <- 500
+          ) 
+    )
+}function carpincho(){
+    return( Animal( nombre <- "carpincho" ,
+                    especie <-Carpincho,
+                    peso <- 2000
+          ) 
+    )
+}
+
+-------------------------------------------------------------------
+function refugio_SinAnimalLlamado_(refugio,nombreAnimal){
+
+    /*
+        Proposito: Describe un refugio a partir de *refugio sin el animal llamada *nombreAnimal
+        Precondicion: El animal con nombre *nombreAnimal debe estar en el refugio
+        Parametros:
+            *refugio: Refugio - Es el refugio sobre el cual se parte para describir uno nuevo sin el animal *nombreAnimal
+            *nombreAnimal: String - Es el nombre del animal que se removerá del refugio
+        Tipo: Refugio
+    */    
+    
+    return(Refugio( refugio| animales <- animalesDelRefugio_SinElAnimal_(refugio,nombreAnimal)
+                            -- cuidadores <- cuidadoresDelRefugio_SinAnimal_(refugio,nombreAnimal)
+                   )          
+        ) 
+}
+-----------------------------------
+function animalesDelRefugio_SinElAnimal_(refugio,nombreAnimal ){
+    
+    return( animalesDelRefugio_AntesDelAnimal_(refugio,nombreAnimal) ++ 
+            resto(animalesDelRefugio_DesdeDelAnimal_(refugio, nombreAnimal))
+            )  
+    
+}
+function animalesDelRefugio_AntesDelAnimal_(refugio,nombreAnimal){
+    animalesRestante := animales(refugio)
+    animalesVistas := []
+    while (not esAnimal_ConElNombre_(primero(animalesRestante), nombreAnimal  )  ) {
+    animalesVistas := animalesVistas ++ [ primero(animalesRestante) ]
+    animalesRestante := resto(animalesRestante)
+ }
+    return (animalesVistas)
+}
+function animalesDelRefugio_DesdeDelAnimal_(refugio, nombreAnimal){
+    animalesRestante := animales(refugio)
+    while (not esAnimal_ConElNombre_(primero(animalesRestante),nombreAnimal)  ) {
+        animalesRestante := resto(animalesRestante)
+    }
+    return (animalesRestante )
+}
+function esAnimal_ConElNombre_(unAnimal, nombreAnimal){
+    return( nombre(unAnimal) == nombreAnimal )
+}
+ program{
+     return(cuidadoresDelRefugio_SinAnimal_(refugio1(),"carpincho"))
+ }
+-------------------------------------------------------------------------------
+function cuidadoresDelRefugio_SinAnimal_(refugio,nombreAnimal){
+    
+    cuidadoresConAnimalesAlMomento := []
+    foreach cuidador in cuidadoresDe_ACargoDe_(refugio,nombreAnimal ){
+        cuidadoresConAnimalesAlMomento := cuidadoresConAnimalesAlMomento ++ [cuidador_SinElAnimalLlamado_(cuidador,nombreAnimal )]    
+    }
+    return( cuidadoresConAnimalesAlMomento)
+}
+
+function cuidador_SinElAnimalLlamado_( cuidador,nombreAnimal ){
+    
+    return(Cuidador(cuidador|  nombresACargo <- nombresDeAnimales_Sin_(cuidador,nombreAnimal)
+                    )
+          )
+}
+function nombresDeAnimales_Sin_(cuidador, nombreAnimal){
+    animalesDelCuidador := []
+    foreach animal in nombresACargo(cuidador){
+        animalesDelCuidador :=animalesDelCuidador ++ singular_Si_(animal, nombre(animal) /= nombreAnimal )    
+    }
+    return(animalesDelCuidador)
+}
+function cuidadoresDe_ACargoDe_(refugio,nombreAnimal ){
+    cuidadoresACargoDelAnimal :=[]
+    foreach cuidador in cuidadores(refugio){
+        cuidadoresACargoDelAnimal := cuidadoresACargoDelAnimal ++   singular_Si_(cuidador,estaACargoDe_ElCuidador_(nombreAnimal,cuidador)) 
+    }
+    return(cuidadoresACargoDelAnimal )
+}
+function estaACargoDe_ElCuidador_(nombreAnimal,cuidador){
+    /*Proposito: Indica si el *cuidador está a cargo del animal *nombreAnimal
+        Tipo: Booleano
+    */
+    nombresAnimales := nombresACargo(cuidador)
+    while(not esVacía(nombresAnimales) && nombre(primero(nombresAnimales)) /= nombreAnimal){
+        nombresAnimales := resto(nombresAnimales)
+    }
+    return(not esVacía(nombresAnimales) )
+}
+
+
+function singular_Si_(elemento, condición) {
+     /* PROPÓSITO: Describir una lista según el valor de la condición dada. 
+                  Si es verdadera, describe la lista singularcon **elemento**. Si no, describe la lista vacía.
+        PRECONDICIONES: Ninguna.
+        PARÁMETROS:
+            * elemento: De un tipo cualquiera.
+            * condición: Booleano.
+        TIPO: Lista del tipo de **elemento**.
+    */
+    return (choose [elemento] when (condición)
+                [] otherwise)
+}
+
