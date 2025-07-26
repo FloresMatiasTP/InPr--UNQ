@@ -1,0 +1,363 @@
+type Cadena is record {
+    field nombre // String
+    field locales // Lista de Local
+    field franquiciados // Lista de Franquiciado
+}
+
+type Local is record {
+    field idLocal // Numero
+    field localidad // Localidad
+    field pedidos // Lista de Pedido
+    field precioPorUnidad // Numero
+    field gustos // Lista de GustoEmpanada
+}
+
+type Franquiciado is record {
+    field dni // String
+    field nombre // String
+    field idLocales // Lista de Numero
+}
+
+type Pedido is record {
+    field importe // Numero
+    field gustos  // Lista de GustoEmpanada
+}
+
+type Localidad is variant {
+    case Caba        {} 
+    case Quilmes     {}
+    case Berazategui {}
+    case Varela      {}
+    case Avellaneda  {}
+}
+
+type GustoEmpanada is variant {
+    case Humita       {}
+    case CarneSuave   {}
+    case CarnePicante {}
+    case Verdura      {}
+    case JamónYQueso  {}
+}
+
+function minLocalidad() {
+    /*
+        PRÓPOSITO: Describe la primera localidad en un recorrido sobre localidades.
+        PRECONDICIONES: Ninguna.
+        TIPO: Localidad
+    */
+} 
+
+function maxLocalidad() {
+    /*
+        PRÓPOSITO: Describe la última localidad en un recorrido sobre localidades.
+        PRECONDICIONES: Ninguna.
+        TIPO: Localidad
+    */
+    
+} 
+
+function siguienteLocalidad_(localidad) {
+} 
+
+
+-- 1.
+function cadena_TrasVentaDeFranquiciadoConDni_ADni_ConNombre_(
+        cadena,
+        dniVendedor,
+        dniComprador,
+        nombreComprador
+    ) {
+    /*
+        PROPÓSITO: Describe una cadena igual a la dada, donde
+            el franquiciado con dni **dniVendedor** vendió su
+            franquicia a la persona con dni **dniComprador** y
+            nombre **nombreComprador**.
+        PARÁMETROS:
+            * cadena : Cadena
+            * dniVendedor : String
+            * dniComprador : String
+            * nombreComprador : String
+        TIPO: Cadena
+        PRECONDICIONES:
+            * Hay un franquiciado con el dni **dniVendedor**
+                en la cadena dada
+            * No hay un franquiciado con dni **dniComprador**
+                en la cadena dada.
+            * **dniComprador** debe ser un dni valido.
+    */
+    return (
+        Cadena( cadena |
+            franquiciados <- 
+                franquiciadosEn_SinFranquiciadoConDni_(cadena, dniVendedor)
+                ++ [
+                    franquiciadoConDni_Nombre_YIdsDeLocales_(
+                        dniComprador,
+                        nombreComprador,
+                        idLocales(franquiciadoEn_ConDni_(franquiciados(cadena), dniVendedor))
+                    )
+                ]
+        )
+    )
+} 
+
+function franquiciadosEn_SinFranquiciadoConDni_(cadena, dni) {
+    /*
+        PROPÓSITO: Describe la lista de franquiciados de la cadena dada
+            sin el franquiciado con dni dado.
+        PARÁMETROS:
+            * cadena : Cadena
+            * dni : String
+        TIPO: Lista de Franquiciado
+        PRECONDICIONES:
+            * Debe haber un franquiciado con el dni dado en la cadena dada.
+    */
+    return (
+        elementos_SinPrimeraAparicionDe_(
+            franquiciados(cadena),
+            franquiciadoEn_ConDni_(franquiciados(cadena), dni)
+        )
+    )
+}
+
+function franquiciadoConDni_Nombre_YIdsDeLocales_(
+    dni,
+    nombre,
+    idsLocales
+    ) {
+    /*
+        PROPÓSITO: Describe un nuevo franquiciado con
+            el dni **dniComprador** el nombre **nombreComprador**
+            y todos los locales del franquiciado **dniVendedor** en
+            la cadena dada.
+        PARÁMETROS:
+            * dni : String
+            * nombre : String
+            * idsLocales : Lista de Número
+        TIPO: Franquiciado
+        PRECONDICIONES:
+            * **dni** es un dni valido.
+    */
+    return (
+        Franquiciado(
+            dni <- dniComprador,
+            nombre <- nombreComprador,
+            idLocales <- idsLocales
+        )
+    )
+}
+
+
+function franquiciadoEn_ConDni_(franquiciados, dni) {
+    /*
+        PROPÓSITO: Describe el franquiciado con el dni dado
+            en la lista dada.
+        PARÁMETROS:
+            * franquiciados : Lista de Franquiciado
+            * dni : String
+        TIPO: Franquiciado
+        PRECONDICIONES:
+            * Existe un frasnquiciado con el dni dado en la lista dada.
+    */
+    /*
+        OBSERVACION: Es un recorrido
+            de busqueda sabiendo que esta
+            sobre la lista de franquiciados dada
+            buscando un franquiciado que tenga el dni dado
+    */
+    franquiciadosPorVer := franquiciados
+    while ( dni(primero(franquiciadosPorVer)) /= dni ) {
+        franquiciadosPorVer := resto(franquiciadosPorVer)
+    }
+    return ( primero(franquiciadosPorVer) )
+}
+
+
+
+-- 2
+
+function franquiciadosConLocalLiderDeFacturaciónPorLocalidadesDe_(
+    cadena
+) {
+    /*
+        PROPÓSITO: Describe la lista de franquiciados dueños de locales
+            lideres de facturacion por localidad en el orden en el
+            que se recorren las localidades.
+        PARÁMETROS:
+            * cadena : Cadena
+        TIPO: Lista de Franquiciado
+        PRECONDICIONES:
+            * Hay al menos un local en la cadena para cada localidad.
+            * Hay un local en la cadena dada para cada localidad que
+                tiene mas facturacion que el resto.
+    */
+    /*
+        OBSERVACIONES: Es un recorrido
+            de transformacion
+            sobre localidades
+            quedandome con el franquiciado lider para cada localidad
+    */
+    localidadActual := minLocalidad()
+    franquiciadosLideresHastaAhora := []
+    while ( localidadActual /= maxLocalidad() ) {
+        franquiciadosLideresHastaAhora :=
+            franquiciadosLideresHastaAhora
+            ++ [ franquiciadoConLocalLiderEnFacturacionEn_De_(localidadActual, cadena) ]
+        localidadActual := siguienteLocalidad_(localidadActual)
+    }
+    return (franquiciadosLideresHastaAhora
+            ++ [franquiciadoConLocalLiderEnFacturacionEn_De_(localidadActual, cadena)])
+} 
+
+function franquiciadoConLocalLiderEnFacturacionEn_De_(localidad, cadena) {
+    /*
+        PROPÓSITO: Describe al franquiciado dueño del local
+            que es lider en facturacion en la localidad dada,
+            para la cadena dada.
+        PARÁMETROS:
+            * localidad : Localidad
+            * cadena : Cadena
+        TIPO: Franquiciado
+        PRECONDICIONES:
+            * Hay al menos un local en la cadena dada de la localidad dada.
+            * Hay un local en la cadena dada en las localidad dada que
+                tiene mas facturacion que el resto.
+    */
+    return (    
+        franquiciadoDueñoDeLocal_En_(
+            localConMayorFacturacionEntre_(
+                localesEn_QueEstanEnLocalidad_(
+                    locales(cadena),
+                    localidad)
+                )
+            ),
+            cadena
+        )
+    )
+}
+
+function localesEn_QueEstanEnLocalidad_(locales, localidad) {
+    /*
+        PROPÓSITO: Describe la lista con los locales de la lista
+            dada que estén en la localidad dada
+        PARÁMETROS:
+            * locales : Lista de Local
+            * localidad : Localidad
+        TIPO: Lista de Local
+        PRECONDICIONES: Ninguna
+    */
+    /*
+        OBSERVACIÓN: Es un recorrido
+            de filtro
+            sobre locs locales dados
+            quedandome con los locales que sean de la localidad dada
+    */
+    localesDeLocalidadHastaAhora := []
+    foreach local in locales {
+        localesDeLocalidadHastaAhora :=
+                localesDeLocalidadHastaAhora
+                ++ singular_Si_(local, localidad(local) == localidad)
+    }
+    return (localesDeLocalidadHastaAhora)
+}
+
+
+// Filtro sobre locales quedandome con los que son de una localidad particular
+
+function localConMayorFacturacionEntre_(locales) {
+    /*
+        PROPÓSITO: Describe el local con mayor facturacion entre 
+            los de la lista dada.
+        PARÁMETROS:
+            * locales : Lista de Local
+        TIPO: Local
+        PRECONDICIONES:
+            * Debe haber un local con mayor facturacion que los otros
+                en la lista dada.
+    */
+    /*
+        OBSERVACIONES: Es un recorrido
+            de maximo-minimo
+            sobre la lista de locales dada
+            maximizando aquel local de mayor facturacion
+    */
+    localDeMayorFacturacionAlMomento := primero(localesd)
+    foreach local in resto(locales) {
+        localDeMayorFacturacionAlMomento :=
+            localDeMayorFacturacionEntre_Y_(
+                localDeMayorFacturacionAlMomento,
+                local
+            )
+    }
+    return ( localDeMayorFacturacionAlMomento )
+}
+
+function localDeMayorFacturacionEntre_Y_(primerLocal, segundoLocal) {
+    /*
+        PROPÓSITO: Describe el local con mayor facturacion entre
+            los dos dados. Si ambos tienen la misma facturacion
+            describe el segundo.
+        PARÁMETROS:
+            * primerLocal : Local
+            * segundoLocal : Local
+        TIPO: Local
+        PRECONDICIONES: Ninguna.
+    */
+    return ( choose
+        primerLocal  when ( 
+            facturacionDe_(primerLocal)
+            >
+            facturacionDe_(segundoLocal)
+        )
+        segundoLocal otherwise
+    )
+}
+
+function facturacionDe_(local) {
+    /*
+        PROPÓSITO: Describe la factruración del local dado.
+        PARÁMETROS:
+            * local : Local
+        TIPO: Número
+        PRECONDICIONES: Ninguna
+    */
+    /*
+        OBSERVACIONES: Es un recorrido
+            de acumulacion
+            sobre los pedidos del local dado
+            acumulando el importe de cada pedido
+    */
+    facturacionAlMomento := 0
+    foreach pedido in pedidos(local) {
+        facturacionAlMomento :=
+                facturacionAlMomento
+                + importe(pedido)
+    }
+    return (facturacionAlMomento)
+}
+
+
+
+-- 3
+function gustoMasVendidoDe_(localDeEmpanadas) {
+    /*
+        PROPÓSITO: Describe el gusto de empoanadas mas vendido del local dado.
+        PARAMETROS: localDeEmpanadas : Local
+        TIPO: GustoEmpanada
+        PRECONDICIONES: Hay un gusto en el local mas vendido que el resto
+    */
+    /*
+        OBSERVACIÓN: Es un recorrido
+            de maximo-minimo
+            sobre gustos de empanadas
+    */
+    gustoActual := minGusto()
+    gustoMasVendidoAlMomento := gustoActual
+    while (gustoActual /= maxGusto()) {
+        gustoMasVendidoAlMomento := gustoMasVendidoEntre_Y_En_(gustoActual, gustoMasVendidoAlMomento, localDeEmpanadas)
+        gustoActual := siguienteGusto_(gustoActual)
+    }
+    return (gustoMasVendidoEntre_Y_En_(gustoActual, gustoMasVendidoAlMomento, localDeEmpanadas))
+}
+
+// a Correcto No
+// b Adecuado

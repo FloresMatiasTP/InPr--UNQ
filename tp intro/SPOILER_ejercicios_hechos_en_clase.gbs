@@ -1,0 +1,91 @@
+function nombreDelChefEn_QuePrepara_(listaDeChefs, nombreDeComida) {
+    /*
+        PROPÓSITO: describe el nombre del chef de la lista de chefs dada
+            que prepara la comida dada. Si hay mas de un chef que prepara
+            dicha comida, describe el primero.
+        PARÁMETROS:
+            * listaDeChefs: Lista de ChefGobiano
+            * nombreDeComida: String
+        TIPO: String
+        PRECONDICIONES:
+            * debe exitir al menos un chef en la lista de chef dada
+                 que haga la comida con el nombre dado.
+        OBSERVACIONES: Recorrido de búsqueda parcial sobre cada chef de la lista de chef dada.
+            Buscando el primer chef que prepare la comida con el nombre de comida dada.
+    */
+
+    chefsARecorrer:= listaDeChefs
+
+    while (not esChef_QuePrepara_(  primero(chefsARecorrer), nombreDeComida) ){
+        chefsARecorrer:= resto(chefsARecorrer)
+    }
+    
+    return (nombre(primero(chefsARecorrer)))
+}
+
+function esChef_QuePrepara_(chef, nombreDeComida) {
+    /*
+        PROPÓSITO:  indica si el chef dado pepara comidas
+            con el nombre **nombreDeComida**
+        PARÁMETROS:
+            * listaDeChefs: Lista de ChefGobiano
+            * nombreDeComida: String
+        TIPO: Booleano
+        PRECONDICIONES:
+            * Ninguna
+        OBSERVACIONES: Busqueda total sobre cada receta que hace el chef
+            buscando la receta que tenga el nombre de comida dado.
+    */
+
+    recetaARecorrer:= receta(chef)
+
+    while (not esVacía(recetaARecorrer) 
+        && nombre(primero(recetaARecorrer)) /= nombreDeComida) {
+        recetaARecorrer:= resto(recetaARecorrer)
+    }
+    
+    return (not esVacía(recetaARecorrer))
+}
+
+function nombreDeChefMásPulentaEn_(listaDeChefs) {
+    /*
+        PROPÓSITO:  describe el nombre chef que hace mas comidas
+            pulentas en la lista de chefs dado.
+        PARÁMETROS:
+            * listaDeChefs: Lista de ChefGobiano
+        TIPO: String
+        PRECONDICIONES:
+            * debe existir un unico chef en la lista dada que sea
+                el chef mas pulenta.
+        OBSERVACIONES: Recorrido de max/min sobre cada chef de lista
+            de chefs dada.
+    */
+
+    chefMasPulentaHastaAhora:= primero(listaDeChefs)
+
+    foreach chef in resto(listaDeChefs) {
+        chefMasPulentaHastaAhora:= chefMasPulentaEntre_Y_(chefMasPulentaHastaAhora, chef)
+    }
+    
+    return (nombre(chefMasPulentaHastaAhora))
+}
+
+function chefMasPulentaEntre_Y_(primerChef, segundoChef) {
+    /*
+        PROPÓSITO:  describe el chef que hace mas comidas
+            pulentas entre los chefs dados dado.
+                si los dos son igual de pulentas, describe el primero.
+        PARÁMETROS:
+            * primerChef: ChefGobiano
+            * segundoChef: ChefGobiano
+        TIPO: ChefGobiano
+        PRECONDICIONES: Ninguna
+    */
+    
+    return (
+        choose
+            primerChef when (cantidadDeComidasPulentaDe_(primerChef) >= cantidadDeComidasPulentaDe_(segundoChef))
+            segundoChef otherwise
+        
+    )
+}

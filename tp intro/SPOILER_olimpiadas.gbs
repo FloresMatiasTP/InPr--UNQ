@@ -1,0 +1,230 @@
+function paísLiderDelMedalleroEn_(juegoOlímpico) {
+    /*
+        PROPÓSITO:  describe el nombre del pais que esta liderando
+            el medallero en los juegos juegos olimpicos dados.
+        PARÁMETROS:
+            * juegoOlímpico: JuegoOlímpico
+        TIPO: String
+        PRECONDICIONES:
+            * Debe existir al menos una delegacion.
+        OBSERVACIONES: Recorrido de maximos y minimos recorriendo las delegaciones
+            del juego olimpico dado. buscando el que tenga mas medallas.
+    */
+    
+    delegacionConMasMedallas := primero(delegaciones(juegoOlímpico))// eeuu
+
+    foreach delegacion in resto(delegaciones(juegoOlímpico)) {
+        delegacionConMasMedallas := delacionConMasMedallasEntre_Y_(delegacion, delegacionConMasMedallas, juegoOlímpico)
+    }
+
+    return (pais(delegacionConMasMedallas))
+}
+
+
+function delacionConMasMedallasEntre_Y_(primeraDelegacion, segundaDelegacion, juegoOlímpico) {
+    /*
+        PROPÓSITO:  describe la delegacion que esta liderando
+            el medallero entre los equipos dados en el juego olimpico dados.
+            si ambos paises tienen las mismas cantidades de medallas, se describe la segunda
+            delegacion.
+        PARÁMETROS:
+            * primeraDelegacion: Delegacion
+            * segundaDelegacion: Delegacion
+            * juegoOlímpico: JuegoOlímpico
+        TIPO: Delegacion
+        PRECONDICIONES:
+            * las delegaciones dadas corresponden al juego olimipico dado.
+    */
+    
+    return (
+        choose
+            primeraDelegacion when (
+                medallasDe_De_En_(Oro, primeraDelegacion, juegoOlímpico) > 
+                medallasDe_De_En_(Oro, segundaDelegacion, juegoOlímpico) ||
+
+                (medallasDe_De_En_(Oro,primeraDelegacion, juegoOlímpico) ==
+                medallasDe_De_En_(Oro, segundaDelegacion, juegoOlímpico) &&
+                medallasDe_De_En_(Plata, primeraDelegacion, juegoOlímpico) > 
+                medallasDe_De_En_(Plata, segundaDelegacion, juegoOlímpico)) ||
+
+                
+                (medallasDe_De_En_(Oro,primeraDelegacion, juegoOlímpico) ==
+                medallasDe_De_En_(Oro, segundaDelegacion, juegoOlímpico) &&
+                medallasDe_De_En_(Plata, primeraDelegacion, juegoOlímpico) ==
+                medallasDe_De_En_(Plata, segundaDelegacion, juegoOlímpico) &&
+                medallasDe_De_En_(Bronce, primeraDelegacion, juegoOlímpico) > 
+                medallasDe_De_En_(Bronce, segundaDelegacion, juegoOlímpico)
+                )
+            )
+            segundaDelegacion otherwise
+        }
+         
+    )
+}
+
+function medallasDe_De_En_(tipoDeMedalla, delegacion, juegoOlímpico) {
+    /*
+        PROPÓSITO:  describe la cantidad de medallas del tipo de medalla dado que
+            consiguio la delegacion dada en el juego olimpico dado. 
+        PARÁMETROS:
+            * tipoDeMedalla: Medalla
+            * delegacion: Delegacion
+            * juegoOlímpico: JuegoOlímpico
+        TIPO: Numero
+        PRECONDICIONES:
+            * Ninguna
+        OBSERVACIONES: Recorrido de acumulacion. recorriendo cada una de las Disciplinas.
+    */
+    cantidadDeMedallasHastaAhora:= 0
+    
+    foreach disciplina in disciplina(juegoOlímpico) {
+        cantidadDeMedallasHastaAhora := cantidadDeMedallasHastaAhora unoSi_CeroSino(
+            esElAtletaConNumero_ParteDe_(ganadorDeMedallaDe_En_(tipo, disciplina), atletas(delegacion)) )
+        )
+    }
+
+
+    return (cantidadDeMedallasHastaAhora)
+}
+
+function esElAtletaConNumero_ParteDe_(nroAtleta, listaDeAtletas) {
+    /*
+        PROPÓSITO:  indica si el atleta con el nroAtleta dado esta en
+            la lista de atletas dada.
+        PARÁMETROS:
+            * nroAtleta: Numero
+            * listaDeAtletas: [Atleta]
+        TIPO: Booleano
+        PRECONDICIONES:
+            * Ninguna
+        OBSERVACIONES: Recorrido de busqueda sobre cada uno de los atletas en
+            la lista de Atletas dada. Buscando el si existe el atleta con
+            nroAtleta dado.
+    */
+    atletasARecorrer := listaDeAtletas
+
+    while (not esVacía(atletasARecorrer) && númeroDeAtleta(atletasARecorrer(primero(atletasARecorrer))) /= nroAtleta) {
+        resto(atletasARecorrer)
+    }
+    
+    return (not esVacía(atletasARecorrer))
+}
+
+function juegoOlímpico_LuegoDeAgregarDisciplina_AAtletaNro_(juegoOlímpico, disciplina, nroDeAtleta) {
+    /*
+        PROPÓSITO:  describe el juego olimpico dado luego de agregar la disciplina dada al
+            atleta con el nroAtleta dado.
+        PARÁMETROS:
+            * juegoOlímpico: JuegoOlímpico
+            * disciplina: Disciplina
+            * nroDeAtleta: Numero
+        TIPO: JuegoOlímpico
+        PRECONDICIONES:
+            * El nro de atleta dado que corresponde a un atleta tiene que estar participando en los juegos olimpicos dados.
+            * Debe existir la disciplina dada en el juego olimpico dado.
+    */
+    
+    return (
+        JuegoOlímpico( juegoOlímpico |
+            delegaciones <- delegaciones_LuegoDeAgregarDisciplina_AAtletaNro_(delegaciones(juegoOlímpico), disciplina, nroDeAtleta)
+
+        )
+    )
+}
+
+function delegaciones_LuegoDeAgregarDisciplina_AAtletaNro_(delegaciones, disciplina, nroDeAtleta) {
+    /*
+        PROPÓSITO:  describe las delegaciones dadas luego de agregar la disciplina dada al
+            atleta con el nroAtleta dado.
+        PARÁMETROS:
+            * delegaciones: [Delegacion]
+            * disciplina: Disciplina
+            * nroDeAtleta: Numero
+        TIPO: [Delegacion]
+        PRECONDICIONES:
+            * El nro de atleta dado que corresponde a un atleta tiene que estar en alguna de las delegaciones dadas.
+            * No hay dos atletas con el mismo número de atleta entre todos los atletas de todas las delegaciones dadas.
+    */
+    delegacionesARecorrer := delegaciones
+
+    delegacionesSinElAtleta := []
+
+    while (not esElAtletaConNumero_ParteDe_(nroDeAtleta, atletas(primero(delegacionesARecorrer)))) {
+        delegacionesSinElAtleta := delegacionesSinElAtleta ++ [primero(delegacionesARecorrer)]
+        delegacionesARecorrer := resto(delegacionesARecorrer)
+    }
+    return (
+        delegacionesSinElAtleta ++ 
+        delegacion_LuegoDeAgregarDisciplina_AAtletaNro_(primero(delegacionesARecorrer), disciplina, nroDeAtleta) ++ 
+        resto(delegacionesARecorrer))
+}
+
+
+function delegacion_LuegoDeAgregarDisciplina_AAtletaNro_(delegacion, disciplina, nroDeAtleta) {
+    /*
+        PROPÓSITO:  describe la delegacion dada luego de agregar la disciplina dada al
+            atleta con el nroAtleta dado.
+        PARÁMETROS:
+            * delegaciones: Delegacion
+            * disciplina: Disciplina
+            * nroDeAtleta: Numero
+        TIPO: Delegacion
+        PRECONDICIONES:
+            * El nro de atleta dado que corresponde a un atleta que esta en la delegacion dada.
+    */
+    
+    return (
+        Delegacion( delegacion |
+            atletas <- 
+                reemplazarEnAtletas_AtletaConNúmero_Por_(
+                    atletas(delegacion), 
+                    nroDeAtleta, 
+                    atleta_ConNuevaDisciplina_(atletaConNro_En_(nroDeAtleta), delegacion), disciplina)
+                )
+
+        )
+    )
+}
+
+function atleta_ConNuevaDisciplina_(atleta, disciplina) {
+    /*
+        PROPÓSITO:  describe el atleta dado con la nueva
+            displina dada agregada.
+        PARÁMETROS:
+            * atleta: Atleta
+            * disciplina: Disciplina
+        TIPO: Atleta
+        PRECONDICIONES:
+            * Ninguna
+    */
+    
+    return (
+        Atleta( atleta |
+            disciplinas <- sinDuplicados_(disciplinas(atleta) ++ [disciplina])
+
+        )
+    )
+}
+
+function atletaConNro_En_(nroAtleta, delegacion) {
+    /*
+        PROPÓSITO:  describe el atleta con el nroAtleta dado esta en
+            la delegacion dada.
+        PARÁMETROS:
+            * nroAtleta: Numero
+            * listaDeAtletas: Delegacion
+        TIPO: Atleta
+        PRECONDICIONES:
+            * Debe existir el atleta con el numero dado en la delegacion dada
+        OBSERVACIONES: Recorrido de busqueda sobre cada uno de los atletas en
+            la lista de Atletas dada. Buscando el el atleta con
+            nroAtleta dado.
+    */
+    atletasARecorrer := listaDeAtletas
+
+    while (númeroDeAtleta(atletasARecorrer(primero(atletasARecorrer))) /= nroAtleta) {
+        resto(atletasARecorrer)
+    }
+    
+    return (primero(atletasARecorrer))
+}

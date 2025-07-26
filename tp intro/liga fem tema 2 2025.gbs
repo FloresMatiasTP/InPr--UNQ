@@ -1,0 +1,277 @@
+type LigaFemenina is record {
+ /*
+    Proposito: Modelar una liga femenina de futbol.
+    In Rep:
+        * la lista de **equipos** no �ene equipos con el mismo nombre
+        * la lista de **sponsor** no �ene sponsor con el mismo nombre
+        * todos los equipos de la lista **equipos** es apoyado por uno o
+            más responsable de la lista **sponsors**
+        * cada nombre de sponsor que apoya a un equipo de la lista de **equipos**
+             corresponde al nombre de un sponsor de la lista de **sponsor**
+ */
+    field sponsors // [sponsor]
+    field equipos // [Equipo]
+}
+type Equipo is record {
+ /*
+    Proposito: Modelar un equipo de la liga
+    In Rep:
+        * **nombre** no es un string vacio
+        * la lista **nombreDeSponsors** no �ene Repe�dos.
+ */
+    field nombre // string
+    field nombreDeSponsors // [string]
+}
+type Sponsor is record {
+ /*
+    Proposito: Modelar un sponsor.
+    Inv. Rep.:
+        * **nombre** no es un string vacio
+        * **montoAportado** es mayor a cero.
+ */
+    field nombre //String
+    field rubro // Rubro
+    field montoAportado // Numero
+}
+
+type Rubro is variant {
+ /*
+    Proposito: losrobros de los sponsors de la liga
+ */
+    case Cripto { }
+    case Seguros { }
+    case Bebidas { }
+    case Salud { }
+    case Automotriz { }
+}
+function elementosDe_QueTieneNombreEntre_(elementos, nombres) {
+ /*
+    Proposito: Describe la lista de elementos entre **elementos** que �enen su nombre entre los nombres de la lista **nombres**
+    Parametros:
+        * elementos: Lista de elementos que �enen un campo nombre (ej, equipos,sponsors,etc.)
+        *nombres : [String]
+    Precondiciones: ninguna
+    Tipo: Lista de elementos iguales a los recibidos
+ */
+}
+-----------------------------------  EJERCICIO 1 TEMA 2 ------------------------------------------------------
+
+function rubrosDeLigas_EnOrdenDeinversión(){
+ /*
+        PROPÓSITO:  describre la lista de lista de rubros en donde para lista principal 
+            hay un elemento lista por cada lista de la lista de lisgas dada.
+        PARÁMETROS:
+            * listaDeLigas: [LigaFemenina]
+        TIPO: [[Rubro]]
+        PRECONDICIONES:
+            * Ninguna
+    */
+    listaDeListaDeRubros := []
+    foreach liga in listaDeLigas {
+        listaDeListaDeRubros:= listaDeListaDeRubros ++ rubrosOrdenadosPorInversionDeLaLiga_(liga)
+    }
+    return (listaDeListaDeRubros)
+}
+
+function rubrosOrdenadosPorInversionDeLaLiga_(liga) {
+    /*
+        PROPÓSITO:  Describe la lista ordenada por inversion los rubros que 
+            invierten en la liga dada.
+        PARÁMETROS:
+            * liga: LigaFemenina
+        TIPO: [Rubro]
+        PRECONDICIONES:
+            * Ninguna
+    */
+    rubrosOrdenadosPorInversion:= []
+    rubrosARecorrer := rubrosDeLaLiga_(liga)
+    while(not esVacía(rubrosARecorrer)){
+        rubrosOrdenadosPorInversion:= rubrosOrdenadosPorInversion ++ [elRubroEntre_QueMasInverteEn_(rubrosARecorrer, liga)]
+        rubrosARecorrer := sinRubroEntre_QueMasInvierteEn_(rubrosARecorrer, liga)
+    }
+
+function  elRubroEntre_QueMasInverteEn_(listaRubros, liga){
+ /*
+        Proposito: Describe el rubro de la lista dada que mas invierte en la liga dada
+        Tipo:Rubro
+        Parametro:
+            -*listaRubros*: Lista de Rubro
+            -*liga*: LigaFemenina
+        Precondicion:
+            -Debe existir un rubeo que invierte mas en la liga dada
+        Observacion:  Es un recorrido de maximo
+                      sobre los rubros de la liga dada
+                      maximizando el rubro que mas invirtio en la liga dada
+    */
+    rubroQueMasInvirtioAlMomento := primero(listaRubros)
+    foreach rubro in resto(liga){
+        rubroQueMasInvirtioAlMomento := rubroQueMasInvirtioEntre_Y_EnLaLiga_(rubroQueMasInvirtioAlMomento, rubro, liga)
+    }
+    return(rubroQueMasInvirtioEntre_Y_EnLaLiga_)
+}
+
+function rubroQueMasInvirtioEntre_Y_EnLaLiga_(primerRubro,segundoRubro, unaLiga){
+ /*
+        Proposito:Describe al rubro que mas invirtio en la liga dada entre los rubros dados.
+                  Si invirtieron la misma cantidad describe al primero
+        Tipo:Rubro
+        Parametro:
+            -primerRubro: Rubro
+            -segundoRubro: Rubro 
+            -unaLiga: LigaFemenina
+        Precondicion:ninguna
+    */   
+    return(  choose primerRubro when( inversionesDelRubro_En_(primerRubro,unaLiga) >= inversionesDelRubro_En_(segundoRubro,unaLiga) )
+                    segundoRubro otherwise 
+        )
+}
+function inversionesDelRubro_En_(unRubro, unaLiga){
+/*
+        Proposito:Describe la cantidad que invirtieron en la liga dada los sponsors de rubro dado
+        Tipo:Numero
+        Parametro:
+            -unRubro: Rubro
+            -unaLiga : LigaFemenina
+        Precondicion:ninguno
+        Observacion:
+                    Es un recorrido de acumulacion
+                    sobre los sponsors de la liga dada
+                    acumulando la cantidad que invirtio el sponsor del rubro dado en la liga dada
+    */    
+    cantidadInvertidaAlMomento:=0
+    foreach sponsor in sponsor(unaLiga){
+        cantidadInvertidaAlMomento:= cantidadInvertidaAlMomento + montoAportadoDelRubro_Si_SinoCero(rubro(sponsor), rubro(sponsor) == unRubro )
+    }
+    return(cantidadInvertidaAlMomento)
+  
+    
+}
+function montoAportadoDelRubro_Si_SinoCero(rubro,condicion){
+    /*
+        Posposito:Describe el monto aportado del rubro dado si cumple la condicion dada sino describe cero
+        Precondicion: ninguno
+        Tipo:Numero
+        PArametro:
+                -rubro: Rubro
+                -condicion: Booleano
+    */
+    return( choose montoApontado(rubro) when(condicion)
+                    0 otherwise
+        )
+}
+----------------------------------------    EJERCICIO 2 TEMA 2  ------------------------
+
+
+function laLiga_HabiendoSancionadoALosDeEntre_SiRompeReglamento(unaLiga, nombresEquipos){
+ /*
+        PROPÓSITO:  describe a la liga dada luego de haber sancionado a los equipos con
+            en los nombres dados si es necesario.
+        PARÁMETROS:
+            * liga: LigaFemenina
+            * nombreDeEquipos: [String]
+        TIPO: LigaFemenina
+        PRECONDICIONES:
+            * los nombres de los equipos dados corresponden equipos de la liga dada.
+            * nombreDeEquipos no tiene repetidos.
+    */
+    
+    return (
+        LigaFemenina( liga | equipos <- equiposDe_SiendoSancionadoALosDeEntre_SiRompenReglamento(liga, nombreDeEquipos)
+        )
+    )
+}
+
+
+function equiposDe_SiendoSancionadoALosDeEntre_SiRompenReglamento(liga, nombresDeEquipos){
+  /*
+        PROPÓSITO:  describe a los equipos de la liga dado luego de haber sancionado a los equipos con
+            en los nombres dados si es necesario.
+        PARÁMETROS:
+            * liga: LigaFemenina
+            * nombreDeEquipos: [String]
+        TIPO: [Equipo]
+        PRECONDICIONES:
+            * los nombres de los equipos dados corresponden equipos de la liga dada.
+            * nombreDeEquipos no tiene repetidos.
+    */  
+    equiposActualizados:= []
+    foreach equipo in equipos(liga){
+        equiposActualizados:= equiposActualizados ++ [equipo_SancionadoSiCorrespondeYtieneElNombre_En_(equipo,nombresDeEquipos,liga )]
+    }
+    return(equiposActualizados)
+    
+}
+
+function equipo_SancionadoSiCorrespondeYtieneElNombre_En_(equipo, nombresEquipo, liga){
+ /*
+        Proposito:Describe al equipo dado dado sancionado si corresponde y
+            tiene el nombre de algunos de los nombre de equipos dado en la liga dada, sino desceribe al equipo sin sancion.
+        Tipo:Equipo
+        Parametro:
+            -equipo: Equipo
+            -nombresEquipo: Lista de String
+            -liga: Liga Femenina
+        Precondicion:
+                * el equipo corresponde a la liga dada
+    */   
+    return( choose equipo_SoloConElPrimerSponsor(equipo)  when ( contiene_A_(nombresEquipo, nombre(equipo)) || 
+                                                                tieneEquipo_SponsorsDelMismoRubroEnLaLiga_(equipo,liga)  )
+                   equipo otherwise
+        )
+}
+function equipo_SoloConElPrimerSponsor(equipo){
+ /*
+        Proposito:Describe al equipo dado solo con su primer sponsor
+        Tipo:Equipo
+        Parametro:
+             -equipo: Equipo
+        Precondicion:ninguna
+    */
+    return( Equipo(equipo| sponsors <- [primero(sponsors(equipo))]
+                  )
+           )
+}
+
+function tieneEquipo_SponsorsDelMismoRubroEnLaLiga_(equipo, liga){
+  /*
+        Proposito:Indica si el equipo dado en la liga dada tiene 2 sponsors del mismo rubro
+        Tipo:Booleano
+        Parametro:
+                -equipo:Equipo
+                -liga: Liga Femenina
+        Precondicion:
+                    * el equipo dado pertenece a la liga dada
+
+    */  
+    return( longitudDe_(nombresDeSponsors(equipo)) >= 2 &&
+        sonLosSponsors_DelMismoRubro(elementosDe_QueTienenNombreEntre_(sponsors(liga), nombreDeSponsor(equipo)))
+    
+}
+function sonLosSponsors_DelMismoRubro(sponsors){
+  /*
+        Proposito:Indica si los sponsors de la lista dada  son del mismo rubro
+        Tipo:Boolenao
+        Parametro:
+                -sponsors: Lista de Sponsor
+        Precondicion:
+                   * los sponsors dados no puede ser una lista vacia.
+                   *La lista de sponsos dados debe tener al menos 2 sponsors
+        Observacion:  Es un recorrido de busqueda
+                      sobre la lista dada
+                      buscando si dos sponsors son del mismo rubro
+    */
+
+    sponsorsARecorrer := sponsors
+    while(not esVacía(sponsorsARecorrer) && rubro(primero(sponsorsARecorrer)) /= rubro(primero(sponsors))) {
+        sponsorsARecorrer := resto(sponsorsARecorrer)
+    }
+    return (not esVacía(sponsorsARecorrer))
+
+/*
+        Proposito:
+        Tipo:
+        Parametro:
+        Precondicion:
+        Observacion:
+    */
+

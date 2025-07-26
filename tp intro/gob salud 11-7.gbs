@@ -1,0 +1,80 @@
+type EmpresaMédica is record { /*
+    PROPOSITO: Modelar una empresa de prestaciones médicas.
+    INY REP:
+    * El dnl no sea vacío.
+    * No hay dos empresas con el mismo dnl.
+    * No hay dos socios en 'socios' con el mismo número de dni.
+    * 'nombrePrestador' no es un string.
+    * Se utiliza un tipo de 'prestaciones' que tiene el id,
+      coincide con el nombre y el tipo de la prestadora en el campo 'prestaciones' que tiene el id
+      y el tipo de la prestadora en el campo 'prestaciones'.
+    * Todas las autorizaciones de los socios en 'socios' tienen un número distinto de
+      'idDePrestación' que debe ser distinto al id de alguna prestación del campo 'prestaciones'.
+*/
+    field prestaciones    // [Prestación]
+    field socios          // [Socio]
+}
+type Prestación is record { /*
+    PROPOSITO: Modelar una Prestación médica.
+    INY REP:
+    * 'nombreDePrestador' no es un string
+    * 'bonos' > 0
+    * 'id' es mayor a cero.
+    * 'id' debe ser el mayor a
+      igual a cero.
+*/
+    field id              // Número
+    field nombrePrestador // String
+    field cantidadBonos   // Número
+    field tipo            // TipoDePrestación
+}
+type Pedido is record { /*
+    PROPOSITO: Modelar un pedido de prestación
+    INY REP:
+    *
+*/
+    field tipo              // TipoDePrestación
+    field diagnóstico       // String
+}
+type Autorización is record { /*
+    PROPOSITO: Modelar una autorización de prestación
+    INY REP:
+    *
+*/
+    field tipo             // TipoDePrestación
+    field fecha            // Fecha
+    field idDePrestación   // Número
+    field nombrePrestador  // String
+}
+type Socio is record { /*
+    PROPOSITO: Modelar un socio de la empresa de salud.
+    INY REP:
+    * 'dniSocio' no es un string vacío.
+    * 'cantidadBonos' es mayor o igual a cero.
+*/
+    field dniSocio                // String
+    field cantidadBonos           // Número
+    field pedidosPendientes       // [Pedido]
+    field autorizacionesDadas     // [Autorización]
+}   
+type TipoDePrestación is variant { /*
+    PROPOSITO: Representa distintos tipos
+    de prestaciones médicas.
+*/
+    case Consulta {}
+    case Receta {}
+    case Derivación {}
+    case Estudio {}
+}
+
+function prestaciones_ConPrestadora_Cambiadas(prestaciones, prestadoraVieja, prestadoraNueva)
+/*
+PARAMETROS: describe la lista de prestaciones que tienen, un string con el nombre de la prestadora "prestadoraNueva", solo si su prestadora era "prestadoraVieja", si no, queda inalterada.
+PROPOSITO:
+* 'prestaciones': [Prestación]
+* 'prestadoraVieja': String
+* 'prestadoraNueva': String
+TIPO: [Prestación]
+
+*/
+    }
